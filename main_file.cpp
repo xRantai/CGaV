@@ -29,11 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "shaderprogram.h"
 
 
-float speed = 0;//[radians/s]
+float speed = 0;
+float rotate = 0;
+glm::vec3 pos = { 0.0,0.0,-5.0 }; //pozycja XYZ
 
-Models::Sphere sun(0.5, 36, 36);
-Models::Sphere planet1(0.2, 36, 36);
-Models::Sphere moon1(0.1, 36, 36);
 
 //Error processing callback procedure
 void error_callback(int error, const char* description) {
@@ -44,14 +43,19 @@ void error_callback(int error, const char* description) {
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
 
-	if (action == GLFW_PRESS) {
-		if (key == GLFW_KEY_LEFT) speed = -PI; //Je¿eli wciœniêto klawisz "w lewo" ustaw prêdkoœæ na -PI
-		if (key == GLFW_KEY_RIGHT) speed = PI; //Je¿eli wciœniêto klawisz "w prawo" ustaw prêdkoœæ na PI
+	if (action == GLFW_PRESS) { //Podstawowy model poruszania siê (bez kolizji)
+		if (key == GLFW_KEY_LEFT) rotate -= PI/2; 
+		if (key == GLFW_KEY_RIGHT) rotate += PI/2; 
+		if (key == GLFW_KEY_UP) speed += 1; 
+		if (key == GLFW_KEY_DOWN) speed -= 1; 
 	
 	}
 
 	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;	
+		if (key == GLFW_KEY_LEFT) rotate += PI/2;
+		if (key == GLFW_KEY_RIGHT) rotate -= PI/2;
+		if (key == GLFW_KEY_UP) speed -= 1;
+		if (key == GLFW_KEY_DOWN) speed += 1;
 	}
 }
 
@@ -73,42 +77,22 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	//************Place any code here that needs to be executed once, after the main loop ends************
 }
 
-
-void planets1(float angle) {
-	glm::mat4 Ms = glm::mat4(1.0f); //Sun model matrix is an identity matrix
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Ms));  //Load model matrix into shader program
-	glUniform4f(spLambert->u("color"), 1, 1, 0, 1); //Sun is yellow
-	sun.drawSolid(); //Draw sun
-
-
-	glm::mat4 Mp1 = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Planet's model matrix is a sun matrix multiplied by rotation...
-	Mp1 = glm::translate(Mp1, glm::vec3(1.5f, 0.0f, 0.0f)); //...and translation matrix
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp1));  //Load model matrix into shader program
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1); //Planet is green
-	planet1.drawSolid(); //Draw planet
-
-	glm::mat4 Mk1 = glm::rotate(Mp1, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Moon's model matrix is a planet matrix multiplied by rotation...
-	Mk1 = glm::translate(Mk1, glm::vec3(0.5f, 0.0f, 0.0f));//...and translation matrix
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Load model matrix into shader program
-	glUniform4f(spLambert->u("color"), 0.5, 0.5, 0.5, 1); //Moon is gray
-	moon1.drawSolid(); //Draw moon
-}
-
 //Drawing procedure
 void drawScene(GLFWwindow* window, float angle) {
 	//************Place any code here that draws something inside the window******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear color and depth buffers
 
+	glm::mat4 M = glm::mat4(1.0f);
 	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Compute projection matrix
-	glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Compute view matrix
+	glm::mat4 V = glm::lookAt(pos, glm::vec3(pos[0]+cos(angle)*1.0, pos[1], pos[2]+sin(angle)*1.0), glm::vec3(0.0f, 1.0f, 0.0f)); //Compute view matrix
+	
 
 	spLambert->use();//Aktywacja programu cieniuj¹cego
 	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); 
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
 
-		
-	planets1(angle);
-		
+	Models::teapot.drawSolid();
 
 	glfwSwapBuffers(window); //Copy back buffer to the front buffer
 }
@@ -144,12 +128,17 @@ int main(void)
 	initOpenGLProgram(window); //Call initialization procedure
 
 	//Main application loop
-	float angle = 0; //declare variable for storing current rotation angle
+	float angle = 0.0;
 	
 	glfwSetTime(0); //clear internal timer
 	while (!glfwWindowShouldClose(window)) //As long as the window shouldnt be closed yet...
 	{
-		angle += speed * glfwGetTime(); //Compute an angle by which the object was rotated during the previous frame		
+		
+		angle += rotate * glfwGetTime(); // Rotacja
+
+		pos[0] += cos(angle) * speed * glfwGetTime(); // Prymitywny model poruszania siê bez kolizji
+		pos[2] += sin(angle) * speed * glfwGetTime();
+
 		glfwSetTime(0); //clear internal timer
 		drawScene(window, angle); //Execute drawing procedure
 		glfwPollEvents(); //Process callback procedures corresponding to the events that took place up to now
