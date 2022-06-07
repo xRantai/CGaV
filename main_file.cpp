@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 float speed = 0;
 float rotate = 0;
-glm::vec3 pos = { 0.0,0.0,-5.0 }; //pozycja XYZ
+float angle = 0;
+glm::vec3 pos = { 0.0,0.0,0.0 }; //pozycja XYZ
 
 
 //Error processing callback procedure
@@ -39,15 +40,41 @@ void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
+
+
+
+void movement() { // Prymitywny model poruszania siê bez kolizji
+	angle += rotate * glfwGetTime(); // Rotacja
+
+	pos[0] += cos(angle) * speed * glfwGetTime(); 
+	pos[2] += sin(angle) * speed * glfwGetTime();
+
+	glfwSetTime(0); //clear internal timer
+}
+
+
+//Release resources allocated by the program
+void freeOpenGLProgram(GLFWwindow* window) {
+	freeShaders();
+	//************Place any code here that needs to be executed once, after the main loop ends************
+}
+
 //Procedura obs³ugi klawiatury
 void key_callback(GLFWwindow* window, int key,
 	int scancode, int action, int mods) {
 
-	if (action == GLFW_PRESS) { //Podstawowy model poruszania siê (bez kolizji)
+	if (action == GLFW_PRESS) { 
 		if (key == GLFW_KEY_LEFT) rotate -= PI/2; 
 		if (key == GLFW_KEY_RIGHT) rotate += PI/2; 
 		if (key == GLFW_KEY_UP) speed += 1; 
-		if (key == GLFW_KEY_DOWN) speed -= 1; 
+		if (key == GLFW_KEY_DOWN) speed -= 1;
+		if (key == GLFW_KEY_ESCAPE) {
+			freeOpenGLProgram(window);
+
+			glfwDestroyWindow(window); //Delete OpenGL context and the window.
+			glfwTerminate(); //Free GLFW resources
+			exit(EXIT_SUCCESS);
+		}
 	
 	}
 
@@ -58,10 +85,6 @@ void key_callback(GLFWwindow* window, int key,
 		if (key == GLFW_KEY_DOWN) speed += 1;
 	}
 }
-
-
-
-
 //Initialization code procedure
 void initOpenGLProgram(GLFWwindow* window) {
 	initShaders();
@@ -71,14 +94,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window, key_callback);
 }
 
-//Release resources allocated by the program
-void freeOpenGLProgram(GLFWwindow* window) {
-	freeShaders();
-	//************Place any code here that needs to be executed once, after the main loop ends************
-}
 
 //Drawing procedure
-void drawScene(GLFWwindow* window, float angle) {
+void drawScene(GLFWwindow* window) {
 	//************Place any code here that draws something inside the window******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear color and depth buffers
 
@@ -96,6 +114,8 @@ void drawScene(GLFWwindow* window, float angle) {
 
 	glfwSwapBuffers(window); //Copy back buffer to the front buffer
 }
+
+
 
 int main(void)
 {
@@ -128,19 +148,14 @@ int main(void)
 	initOpenGLProgram(window); //Call initialization procedure
 
 	//Main application loop
-	float angle = 0.0;
+
 	
 	glfwSetTime(0); //clear internal timer
 	while (!glfwWindowShouldClose(window)) //As long as the window shouldnt be closed yet...
 	{
+		movement();
 		
-		angle += rotate * glfwGetTime(); // Rotacja
-
-		pos[0] += cos(angle) * speed * glfwGetTime(); // Prymitywny model poruszania siê bez kolizji
-		pos[2] += sin(angle) * speed * glfwGetTime();
-
-		glfwSetTime(0); //clear internal timer
-		drawScene(window, angle); //Execute drawing procedure
+		drawScene(window); //Execute drawing procedure
 		glfwPollEvents(); //Process callback procedures corresponding to the events that took place up to now
 	}
 	freeOpenGLProgram(window);

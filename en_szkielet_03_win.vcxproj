@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allmodels.h" />
+    <ClInclude Include="bounds.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="lodepng.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="torus.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bounds.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />

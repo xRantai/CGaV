@@ -1,11 +1,11 @@
 ﻿  main_file.cpp
-D:\GitHub\CGaV\main_file.cpp(137,19): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitHub\CGaV\main_file.cpp(139,32): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
+D:\GitHub\CGaV\main_file.cpp(48,18): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitHub\CGaV\main_file.cpp(50,31): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
           with
           [
               T=float
           ]
-D:\GitHub\CGaV\main_file.cpp(140,32): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
+D:\GitHub\CGaV\main_file.cpp(51,31): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
           with
           [
               T=float

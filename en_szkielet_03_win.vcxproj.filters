@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="collisions">
+      <UniqueIdentifier>{41496962-77a5-422d-bb71-d47fe0f02a2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allmodels.h">
@@ -42,6 +45,9 @@
     <ClInclude Include="shaderprogram.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="bounds.h">
+      <Filter>collisions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cube.cpp">
@@ -70,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="textures.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="bounds.cpp">
+      <Filter>collisions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

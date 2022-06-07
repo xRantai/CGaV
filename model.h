@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 #include "constants.h"
+#include "../CGaV/bounds.h"
 
 namespace Models {
 
