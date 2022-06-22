@@ -1,18 +1,21 @@
 /*
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Niniejszy program jest wolnym oprogramowaniem; możesz go
+rozprowadzać dalej i / lub modyfikować na warunkach Powszechnej
+Licencji Publicznej GNU, wydanej przez Fundację Wolnego
+Oprogramowania - według wersji 2 tej Licencji lub(według twojego
+wyboru) którejś z późniejszych wersji.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on
+użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej
+gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH
+ZASTOSOWAŃ.W celu uzyskania bliższych informacji sięgnij do
+Powszechnej Licencji Publicznej GNU.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz
+Powszechnej Licencji Publicznej GNU(GNU General Public License);
+jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple
+Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 */
-
 
 #define GLM_FORCE_RADIANS
 
@@ -23,144 +26,269 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
+#include "myCube.h"
 #include "constants.h"
 #include "allmodels.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
+#include "model_loader.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#include "LoadedModel.h"
+
+#include "texture.h"
+
+#include "bounds.h"
+#include "rigidbody.h"
+
+#include "keyboard.h"
+#include "mouse.h"
+#include "camera.h"
+#include "screen.h"
+
+Camera camera(glm::vec3(-3.0f, 0.0f, 0.0f));
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+Screen screen;
+
+GLuint tex;
+GLuint tex2;
 
 
-float speed = 0;
-float rotate = 0;
-float angle = 0;
-glm::vec3 pos = { 0.0,0.0,0.0 }; //pozycja XYZ
-
-
-//Error processing callback procedure
+//Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
+void processInput(double dt) {
+	if (Keyboard::key(GLFW_KEY_ESCAPE)) {
+		screen.setShouldClose(true);
+	}
 
+	/*
+		Keyboard movement 
+	*/
 
+	if (Keyboard::key(GLFW_KEY_W)) {
+		camera.updateCameraPos(CameraDirection::FORWARD, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_S)) {
+		camera.updateCameraPos(CameraDirection::BACKWARD, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_D)) {
+		camera.updateCameraPos(CameraDirection::RIGHT, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_A)) {
+		camera.updateCameraPos(CameraDirection::LEFT, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_SPACE)) {
+		camera.updateCameraPos(CameraDirection::UP, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
+		camera.updateCameraPos(CameraDirection::DOWN, dt);
+	}
 
-void movement() { // Prymitywny model poruszania si� bez kolizji
-	angle += rotate * glfwGetTime(); // Rotacja
+	/*
+		Mouse movement
+	*/
 
-	pos[0] += cos(angle) * speed * glfwGetTime(); 
-	pos[2] += sin(angle) * speed * glfwGetTime();
-
-	glfwSetTime(0); //clear internal timer
+	double dx = Mouse::getDX(), dy = Mouse::getDY();
+	if (dx != 0 || dy != 0) {
+		camera.updateCameraDirection(dx, dy);
+	}
 }
 
+GLuint readTexture(const char* filename) {
+	GLuint tex;
+	glActiveTexture(GL_TEXTURE0);
 
-//Release resources allocated by the program
-void freeOpenGLProgram(GLFWwindow* window) {
-	freeShaders();
-	//************Place any code here that needs to be executed once, after the main loop ends************
+	//Wczytanie do pamięci komputera
+	std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
+	unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
+	//Wczytaj obrazek
+	unsigned error = lodepng::decode(image, width, height, filename);
+
+	//Import do pamięci karty graficznej
+	glGenTextures(1, &tex); //Zainicjuj jeden uchwyt
+	glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+	//Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)image.data());
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return tex;
 }
 
-//Procedura obs�ugi klawiatury
-void key_callback(GLFWwindow* window, int key,
-	int scancode, int action, int mods) {
+LoadedModel loadModel(std::string plik, const char* texture) {
+	Assimp::Importer importer;
+	std::vector< glm::vec4 > vertices;
+	std::vector< glm::vec2 > texCoords;
+	std::vector< glm::vec4 > normals;
+	std::vector<unsigned int> indices;
 
-	if (action == GLFW_PRESS) { 
-		if (key == GLFW_KEY_LEFT) rotate -= PI/2; 
-		if (key == GLFW_KEY_RIGHT) rotate += PI/2; 
-		if (key == GLFW_KEY_UP) speed += 1; 
-		if (key == GLFW_KEY_DOWN) speed -= 1;
-		if (key == GLFW_KEY_ESCAPE) {
-			freeOpenGLProgram(window);
+	const aiScene* scene = importer.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+	std::cout << importer.GetErrorString() << std::endl;
 
-			glfwDestroyWindow(window); //Delete OpenGL context and the window.
-			glfwTerminate(); //Free GLFW resources
-			exit(EXIT_SUCCESS);
+	auto mesh = scene->mMeshes[0];
+
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D vertex = mesh->mVertices[i];
+		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
+
+		aiVector3D normal = mesh->mNormals[i];
+		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
+
+		aiVector3D texCoord = mesh->mTextureCoords[0][i];
+		texCoords.push_back(glm::vec2(texCoord.x, texCoord.y));
+	}
+
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace& face = mesh->mFaces[i];
+
+		for (int j = 0; j < face.mNumIndices; j++) {
+			indices.push_back(face.mIndices[j]);
 		}
-	
 	}
 
-	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_LEFT) rotate += PI/2;
-		if (key == GLFW_KEY_RIGHT) rotate -= PI/2;
-		if (key == GLFW_KEY_UP) speed -= 1;
-		if (key == GLFW_KEY_DOWN) speed += 1;
+	return LoadedModel(vertices, texCoords, normals, indices, texture);
+}
+
+//Procedura inicjująca
+void initOpenGLProgram() {
+	/*
+		Inicjalizacja parametrów
+	*/
+
+    initShaders();
+	screen.setParameters();
+	glEnable(GL_DEPTH_TEST);
+
+	/*
+		Textures
+	*/
+
+	tex = readTexture("texture.png");
+	tex2 = readTexture("stoneFloor_Albedo.png");
+}
+
+
+//Zwolnienie zasobów zajętych przez program
+void freeOpenGLProgram() {
+    freeShaders();
+    
+	glDeleteTextures(1, &tex);
+	glDeleteTextures(1, &tex2);
+}
+
+
+void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture) {
+
+	spTextured->use();
+
+	glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P)); //Załaduj do programu cieniującego macierz rzutowania
+	glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V)); //Załaduj do programu cieniującego macierz widoku
+	glUniformMatrix4fv(spTextured->u("M"), 1, false, glm::value_ptr(M)); //Załaduj do programu cieniującego macierz modelu
+
+
+	glEnableVertexAttribArray(spTextured->a("vertex"));
+	glVertexAttribPointer(spTextured->a("vertex"), 4, GL_FLOAT, false, 0, model.vertices.data()); //Współrzędne wierzchołków bierz z tablicy myCubeVertices
+
+	glEnableVertexAttribArray(spTextured->a("texCoord"));
+	glVertexAttribPointer(spTextured->a("texCoord"), 2, GL_FLOAT, false, 0, model.texCoords.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(spTextured->u("tex"), 0);
+
+	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, model.indices.data());
+
+	glDisableVertexAttribArray(spTextured->a("vertex"));
+	glDisableVertexAttribArray(spTextured->a("color"));
+}
+LoadedModel wall = loadModel("wall.obj", "texture.png");
+LoadedModel floor_model = loadModel("floor.obj", "stoneFloor_Albedo.png");
+
+void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k) {
+	for (int i = 0; i < k; i++) {
+		draw(P, V, M, model, texture);
+		M = glm::translate(M, glm::vec3(1.5f, 0.0f, 0.0f));
 	}
 }
-//Initialization code procedure
-void initOpenGLProgram(GLFWwindow* window) {
-	initShaders();
-	//************Place any code here that needs to be executed once, at the program start************
-	glClearColor(0, 0, 0, 1); //Set color buffer clear color
-	glEnable(GL_DEPTH_TEST); //Turn on pixel depth test based on depth buffer
-	glfwSetKeyCallback(window, key_callback);
+
+void turnleft(glm::mat4 Mt) {
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(1.0f, 0.0f, 0.75f));
 }
 
+void turnright(glm::mat4 Mt) {
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(1.0f, 0.0f, 0.75f));
+}
 
-//Drawing procedure
-void drawScene(GLFWwindow* window) {
-	//************Place any code here that draws something inside the window******************l
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear color and depth buffers
-
-	glm::mat4 M = glm::mat4(1.0f);
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Compute projection matrix
-	glm::mat4 V = glm::lookAt(pos, glm::vec3(pos[0]+cos(angle)*1.0, pos[1], pos[2]+sin(angle)*1.0), glm::vec3(0.0f, 1.0f, 0.0f)); //Compute view matrix
+//Procedura rysująca zawartość sceny
+void drawScene() {
+	glm::mat4 M = glm::mat4(1.0f); 
+	glm::mat4 V = camera.getViewMatrix();
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
 	
-
-	spLambert->use();//Aktywacja programu cieniuj�cego
+	spLambert->use();//Aktywacja programu cieniującego
 	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); 
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
 
 	Models::teapot.drawSolid();
-
-	glfwSwapBuffers(window); //Copy back buffer to the front buffer
 }
-
 
 
 int main(void)
 {
-	GLFWwindow* window; //Pointer to object that represents the application window
+	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
-	glfwSetErrorCallback(error_callback);//Register error processing callback procedure
-
-	if (!glfwInit()) { //Initialize GLFW library
-		fprintf(stderr, "Can't initialize GLFW.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Create a window 500pxx500px titled "OpenGL" and an OpenGL context associated with it. 
-
-	if (!window) //If no window is opened then close the program
+	if (!screen.init()) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
+		fprintf(stderr, "Nie można utworzyć okna.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	glfwMakeContextCurrent(window); //Since this moment OpenGL context corresponding to the window is active and all OpenGL calls will refer to this context.
-	glfwSwapInterval(1); //During vsync wait for the first refresh
-
-	GLenum err;
-	if ((err = glewInit()) != GLEW_OK) { //Initialize GLEW library
-		fprintf(stderr, "Can't initialize GLEW: %s\n", glewGetErrorString(err));
+	if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
+		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	initOpenGLProgram(window); //Call initialization procedure
+	glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
 
-	//Main application loop
-
-	
-	glfwSetTime(0); //clear internal timer
-	while (!glfwWindowShouldClose(window)) //As long as the window shouldnt be closed yet...
-	{
-		movement();
-		
-		drawScene(window); //Execute drawing procedure
-		glfwPollEvents(); //Process callback procedures corresponding to the events that took place up to now
+	if (glewInit() != GLEW_OK) { //Zainicjuj bibliotekę GLEW
+		fprintf(stderr, "Nie można zainicjować GLEW.\n");
+		exit(EXIT_FAILURE);
 	}
-	freeOpenGLProgram(window);
+	
+	initOpenGLProgram();
 
-	glfwDestroyWindow(window); //Delete OpenGL context and the window.
-	glfwTerminate(); //Free GLFW resources
+	//Główna pętla
+	while (!screen.shouldClose()) {
+		double currentTime = glfwGetTime();
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
+
+		// Process input
+		processInput(deltaTime);
+
+		// Render
+		screen.update();
+
+		// Wykonaj procedurę rysującą
+		drawScene(); 
+
+		// Nowa klatka
+		screen.newFrame();
+	}
+
+	freeOpenGLProgram();
+	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
 	exit(EXIT_SUCCESS);
 }

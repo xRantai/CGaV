@@ -19,23 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bio_szkielet_07_win\camera.h" />
+    <ClInclude Include="..\bio_szkielet_07_win\keyboard.h" />
+    <ClInclude Include="..\bio_szkielet_07_win\mouse.h" />
     <ClInclude Include="allmodels.h" />
     <ClInclude Include="bounds.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="lodepng.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="rigidbody.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="teapot.h" />
     <ClInclude Include="torus.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\bio_szkielet_07_win\camera.cpp" />
+    <ClCompile Include="..\bio_szkielet_07_win\keyboard.cpp" />
+    <ClCompile Include="..\bio_szkielet_07_win\mouse.cpp" />
     <ClCompile Include="bounds.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="sphere.cpp" />
     <ClCompile Include="teapot.cpp" />

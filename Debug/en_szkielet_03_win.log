@@ -1,13 +1,4 @@
 ﻿  main_file.cpp
-D:\GitHub\CGaV\main_file.cpp(48,18): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitHub\CGaV\main_file.cpp(50,31): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
-          with
-          [
-              T=float
-          ]
-D:\GitHub\CGaV\main_file.cpp(51,31): warning C4244: "+=": konwersja z "double" do "T", możliwa utrata danych
-          with
-          [
-              T=float
-          ]
+D:\GitHub\CGaV\main_file.cpp(164,27): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitHub\CGaV\main_file.cpp(165,15): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
   en_szkielet_03_win.vcxproj -> D:\GitHub\CGaV\Debug\en_szkielet_03_win.exe

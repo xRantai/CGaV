@@ -16,6 +16,9 @@
     <Filter Include="collisions">
       <UniqueIdentifier>{41496962-77a5-422d-bb71-d47fe0f02a2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{8d5d25d7-2dee-4d5b-a1cc-f9cd1ca002bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allmodels.h">
@@ -48,6 +51,18 @@
     <ClInclude Include="bounds.h">
       <Filter>collisions</Filter>
     </ClInclude>
+    <ClInclude Include="rigidbody.h">
+      <Filter>collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bio_szkielet_07_win\camera.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bio_szkielet_07_win\keyboard.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bio_szkielet_07_win\mouse.h">
+      <Filter>io</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cube.cpp">
@@ -79,6 +94,18 @@
     </ClCompile>
     <ClCompile Include="bounds.cpp">
       <Filter>collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="rigidbody.cpp">
+      <Filter>collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bio_szkielet_07_win\camera.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bio_szkielet_07_win\keyboard.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bio_szkielet_07_win\mouse.cpp">
+      <Filter>io</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
