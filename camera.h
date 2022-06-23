@@ -30,7 +30,6 @@ public:
 	float yaw; // x-axis
 	float pitch; // y-axis
 	float speed;
-	float sensitivity;
 	float zoom;
 
 	Camera(glm::vec3 position);

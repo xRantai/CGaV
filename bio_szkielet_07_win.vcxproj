@@ -19,46 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\bio_szkielet_07_win\camera.h" />
+    <ClInclude Include="..\..\bio_szkielet_07_win\keyboard.h" />
+    <ClInclude Include="..\..\bio_szkielet_07_win\mouse.h" />
     <ClInclude Include="allmodels.h" />
-    <ClInclude Include="bounds.h" />
-    <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="cube.h" />
-    <ClInclude Include="keyboard.h" />
     <ClInclude Include="LoadedModel.h" />
     <ClInclude Include="lodepng.h" />
-    <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="model_loader.h" />
-    <ClInclude Include="mouse.h" />
     <ClInclude Include="myCube.h" />
-    <ClInclude Include="rigidbody.h" />
-    <ClInclude Include="screen.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="sphere.h" />
-    <ClInclude Include="stb_image.h" />
     <ClInclude Include="teapot.h" />
-    <ClInclude Include="texture.h" />
     <ClInclude Include="torus.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bounds.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="LoadedModel.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
-    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
-    <ClCompile Include="screen.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="sphere.cpp" />
-    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="teapot.cpp" />
-    <ClCompile Include="texture.cpp" />
     <ClCompile Include="torus.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -5,13 +5,6 @@ VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bio_szkielet_07_win", "bio_szkielet_07_win.vcxproj", "{7288C82C-3F3E-4501-8878-A310FCA284FE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{A2901AEF-B22D-4F17-A6B0-0FD7CD216D02}"
-	ProjectSection(SolutionItems) = preProject
-		src\glad.c = src\glad.c
-		include\glad\glad.h = include\glad\glad.h
-		include\KHR\khrplatform.h = include\KHR\khrplatform.h
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
