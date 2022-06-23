@@ -5,8 +5,7 @@
 #ifndef LoadedModel_H
 #define LoadedModel_H
 
-class LoadedModel
-{
+class LoadedModel{
 public:
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -14,6 +13,7 @@ public:
 	std::vector<unsigned int> indices;
 	const char* texturefile;
 
+	LoadedModel();
 	LoadedModel(std::vector< glm::vec4 >, std::vector< glm::vec2 >, std::vector< glm::vec4 >, std::vector<unsigned int>, const char* r);
 };
 

@@ -48,6 +48,9 @@ float lastFrame = 0.0f;
 GLuint tex;
 GLuint tex2;
 
+LoadedModel wall;
+LoadedModel floor_model;
+
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -157,6 +160,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	tex = readTexture("texture.png");
 	tex2 = readTexture("stoneFloor_Albedo.png");
+
+	wall = loadModel("wall.obj", "texture.png");
+	floor_model = loadModel("floor.obj", "stoneFloor_Albedo.png");
 }
 
 
@@ -193,8 +199,7 @@ void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint textu
 	glDisableVertexAttribArray(spTextured->a("vertex"));
 	glDisableVertexAttribArray(spTextured->a("color"));
 }
-LoadedModel wall = loadModel("wall.obj", "texture.png");
-LoadedModel floor_model = loadModel("floor.obj", "stoneFloor_Albedo.png");
+
 
 void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k) {
 	for (int i = 0; i < k; i++) {
@@ -401,7 +406,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
