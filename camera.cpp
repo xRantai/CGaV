@@ -52,24 +52,8 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 	}
 }
 
-void Camera::updateCameraZoom(double dy) {
-	if (zoom >= 1.0f && zoom <= 45.0f) {
-		zoom -= dy;
-	}
-	else if (zoom < 1.0f) {
-		zoom = 1.0f;
-	}
-	else { // > 45.0f
-		zoom = 45.0f;
-	}
-}
-
 glm::mat4 Camera::getViewMatrix() {
 	return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-}
-
-float Camera::getZoom() {
-	return zoom;
 }
 
 void Camera::updateCameraVectors() {
