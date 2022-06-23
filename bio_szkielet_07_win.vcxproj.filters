@@ -13,15 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{e1a49225-2f52-4b74-b613-22bc74121148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="physics">
+      <UniqueIdentifier>{40682b6d-d677-46ab-ba33-a7f93f99161e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="allmodels.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="constants.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="cube.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="lodepng.h">
@@ -30,19 +30,7 @@
     <ClInclude Include="model.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="sphere.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="teapot.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="torus.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="shaderprogram.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="myCube.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="model_loader.h">
@@ -51,20 +39,20 @@
     <ClInclude Include="LoadedModel.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\bio_szkielet_07_win\mouse.h">
+      <Filter>io</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\bio_szkielet_07_win\camera.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\bio_szkielet_07_win\keyboard.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\bio_szkielet_07_win\mouse.h">
-      <Filter>Pliki nagłówkowe</Filter>
+    <ClInclude Include="bounds.h">
+      <Filter>physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="lodepng.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -77,26 +65,20 @@
     <ClCompile Include="shaderprogram.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="sphere.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="teapot.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="torus.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="LoadedModel.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="keyboard.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="mouse.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="bounds.cpp">
+      <Filter>physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,12 +27,11 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
-#include "myCube.h"
 #include "constants.h"
-#include "allmodels.h"
-#include "lodepng.h"
 #include "shaderprogram.h"
 #include "model_loader.h"
+
+#include "lodepng.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -85,15 +84,6 @@ void processInput(GLFWwindow* window, double dt) {
 	}
 	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
 		Camera::camera.updateCameraPos(CameraDirection::DOWN, dt);
-	}
-
-	/*
-		Mouse movement
-	*/
-
-	double dx = Mouse::getDX(), dy = Mouse::getDY();
-	if (dx != 0 || dy != 0) {
-		Camera::camera.updateCameraDirection(dx, dy);
 	}
 }
 
@@ -161,9 +151,8 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glClearColor(0, 0, 0, 1); //Ustaw kolor czyszczenia bufora kolorów
 	glEnable(GL_DEPTH_TEST); //Włącz test głębokości na pikselach
 
-	glfwSetKeyCallback(window, Keyboard::keyCallback);
-	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
-	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
+	glfwSetKeyCallback(window, Keyboard::keyCallback); // Obsługa klaiatury
+	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback); // Obsługa myszki
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Wyłaczenie graficznej myszki w oknie
 
 	tex = readTexture("texture.png");
