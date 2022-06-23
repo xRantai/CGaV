@@ -19,6 +19,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define GLM_FORCE_RADIANS
 
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -26,32 +27,23 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
-#include "myCube.h"
 #include "constants.h"
-#include "allmodels.h"
-#include "lodepng.h"
 #include "shaderprogram.h"
 #include "model_loader.h"
+
+#include "lodepng.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "LoadedModel.h"
 
-#include "texture.h"
-
-#include "bounds.h"
-#include "rigidbody.h"
-
 #include "keyboard.h"
 #include "mouse.h"
 #include "camera.h"
-#include "screen.h"
 
-Camera camera(glm::vec3(-3.0f, 0.0f, 0.0f));
+Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-Screen screen;
 
 GLuint tex;
 GLuint tex2;
@@ -62,41 +54,36 @@ void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
-void processInput(double dt) {
+void processInput(GLFWwindow* window, double dt) {
+	/*
+		Close window
+	*/
+
 	if (Keyboard::key(GLFW_KEY_ESCAPE)) {
-		screen.setShouldClose(true);
+		glfwSetWindowShouldClose(window, true);
 	}
 
 	/*
-		Keyboard movement 
+		Keyboard movement
 	*/
 
 	if (Keyboard::key(GLFW_KEY_W)) {
-		camera.updateCameraPos(CameraDirection::FORWARD, dt);
+		Camera::camera.updateCameraPos(CameraDirection::FORWARD, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_S)) {
-		camera.updateCameraPos(CameraDirection::BACKWARD, dt);
+		Camera::camera.updateCameraPos(CameraDirection::BACKWARD, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_D)) {
-		camera.updateCameraPos(CameraDirection::RIGHT, dt);
+		Camera::camera.updateCameraPos(CameraDirection::RIGHT, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_A)) {
-		camera.updateCameraPos(CameraDirection::LEFT, dt);
+		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_SPACE)) {
-		camera.updateCameraPos(CameraDirection::UP, dt);
+		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
-		camera.updateCameraPos(CameraDirection::DOWN, dt);
-	}
-
-	/*
-		Mouse movement
-	*/
-
-	double dx = Mouse::getDX(), dy = Mouse::getDY();
-	if (dx != 0 || dy != 0) {
-		camera.updateCameraDirection(dx, dy);
+		Camera::camera.updateCameraPos(CameraDirection::DOWN, dt);
 	}
 }
 
@@ -124,14 +111,14 @@ GLuint readTexture(const char* filename) {
 }
 
 LoadedModel loadModel(std::string plik, const char* texture) {
-	Assimp::Importer importer;
+	Assimp::Importer impoerter;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
 	std::vector< glm::vec4 > normals;
 	std::vector<unsigned int> indices;
 
-	const aiScene* scene = importer.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
-	std::cout << importer.GetErrorString() << std::endl;
+	const aiScene* scene = impoerter.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+	std::cout << impoerter.GetErrorString() << std::endl;
 
 	auto mesh = scene->mMeshes[0];
 
@@ -158,18 +145,15 @@ LoadedModel loadModel(std::string plik, const char* texture) {
 }
 
 //Procedura inicjująca
-void initOpenGLProgram() {
-	/*
-		Inicjalizacja parametrów
-	*/
-
+void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
-	screen.setParameters();
-	glEnable(GL_DEPTH_TEST);
+	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
+	glClearColor(0, 0, 0, 1); //Ustaw kolor czyszczenia bufora kolorów
+	glEnable(GL_DEPTH_TEST); //Włącz test głębokości na pikselach
 
-	/*
-		Textures
-	*/
+	glfwSetKeyCallback(window, Keyboard::keyCallback); // Obsługa klaiatury
+	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback); // Obsługa myszki
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Wyłaczenie graficznej myszki w oknie
 
 	tex = readTexture("texture.png");
 	tex2 = readTexture("stoneFloor_Albedo.png");
@@ -177,9 +161,9 @@ void initOpenGLProgram() {
 
 
 //Zwolnienie zasobów zajętych przez program
-void freeOpenGLProgram() {
+void freeOpenGLProgram(GLFWwindow* window) {
     freeShaders();
-    
+    //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 	glDeleteTextures(1, &tex);
 	glDeleteTextures(1, &tex2);
 }
@@ -219,6 +203,13 @@ void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, G
 	}
 }
 
+void drawmodularwall2(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k) {
+	for (int i = 0; i < k; i++) {
+		draw(P, V, M, model, texture);
+		M = glm::translate(M, glm::vec3(-1.5f, 0.0f, 0.0f));
+	}
+}
+
 void turnleft(glm::mat4 Mt) {
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(1.0f, 0.0f, 0.75f));
@@ -229,66 +220,222 @@ void turnright(glm::mat4 Mt) {
 	Mt = glm::translate(Mt, glm::vec3(1.0f, 0.0f, 0.75f));
 }
 
-//Procedura rysująca zawartość sceny
-void drawScene() {
-	glm::mat4 M = glm::mat4(1.0f); 
-	glm::mat4 V = camera.getViewMatrix();
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
-	
-	spLambert->use();//Aktywacja programu cieniującego
-	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
-
-	Models::teapot.drawSolid();
+glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k, int m) {
+	for (int i = 0; i < k; i++) {
+		for (int j = 0; j < m; j++) {
+			draw(P, V, M, model, texture);
+			M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
+		}
+		M = glm::translate(M, glm::vec3(-1.0f, 0.0f, 1.0f * m));
+	}
+	return M;
 }
 
+//Procedura rysująca zawartość sceny
+void drawScene(GLFWwindow* window) {
+	//************Tutaj umieszczaj kod rysujący obraz******************l
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
+
+	glm::mat4 M = glm::mat4(1.0f); //Zainicjuj macierz modelu macierzą jednostkową
+	glm::mat4 V = Camera::camera.getViewMatrix();
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
+
+	M = glm::translate(M, glm::vec3(8.0f, 0.0f, 6.5f));
+	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
+	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
+	for (int j = 0; j < 4; j++) {
+		draw(P, V, M, floor_model, tex2);
+		M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
+	}
+
+	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
+	for (int j = 0; j < 2; j++) {
+		draw(P, V, M, floor_model, tex2);
+		M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
+	}
+	M = glm::translate(M, glm::vec3(-1.0f, 0.0f, 1.0f * 7));
+	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
+	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
+
+	M = glm::mat4(1.0f);
+	M = glm::scale(M, glm::vec3(1.5f, 1.5f, 1.5f));
+	M = glm::translate(M, glm::vec3(1.0f, 0.25f, 2.0f));
+	drawmodularwall(P, V, M, wall, tex, 4);
+	glm::mat4 Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 3);
+
+	M = glm::rotate(M, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.57f, 0.0f, 0.80f));
+	drawmodularwall(P, V, M, wall, tex, 1);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, M, wall, tex, 2);
+
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -2.45f));
+	drawmodularwall2(P, V, M, wall, tex, 2);
+
+
+	M = glm::translate(M, glm::vec3(-3.0f, 0.0f, 0.0f));
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, M, wall, tex, 1);
+
+
+	Mt = glm::mat4(M);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	drawmodularwall2(P, V, M, wall, tex, 6);
+
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -8.45f));
+	drawmodularwall2(P, V, M, wall, tex, 2);
+
+
+	M = glm::translate(M, glm::vec3(-3.0f, 0.0f, 0.0f));
+	Mt = glm::mat4(M);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 2.30f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-2.25f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 2.3f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
+	drawmodularwall2(P, V, Mt, wall, tex, 2);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
+	drawmodularwall2(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	drawmodularwall2(P, V, M, wall, tex, 5);
+
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -6.95f));
+	drawmodularwall2(P, V, M, wall, tex, 7);
+
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -9.95f));
+	drawmodularwall2(P, V, M, wall, tex, 7);
+
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -9.95f));
+	drawmodularwall2(P, V, M, wall, tex, 1);
+
+
+	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
+}
 
 int main(void)
 {
-	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
+	GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
-	if (!screen.init()) //Jeżeli okna nie udało się utworzyć, to zamknij program
-	{
-		fprintf(stderr, "Nie można utworzyć okna.\n");
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
+	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
 	if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
 
+	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+
+	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
+	{
+		fprintf(stderr, "Nie można utworzyć okna.\n");
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje się aktywny i polecenia OpenGL będą dotyczyć właśnie jego.
 	glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
 
 	if (glewInit() != GLEW_OK) { //Zainicjuj bibliotekę GLEW
 		fprintf(stderr, "Nie można zainicjować GLEW.\n");
 		exit(EXIT_FAILURE);
 	}
-	
-	initOpenGLProgram();
 
+	initOpenGLProgram(window); //Operacje inicjujące
+	
 	//Główna pętla
-	while (!screen.shouldClose()) {
+	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
+	{
 		double currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
-		// Process input
-		processInput(deltaTime);
-
-		// Render
-		screen.update();
-
-		// Wykonaj procedurę rysującą
-		drawScene(); 
-
-		// Nowa klatka
-		screen.newFrame();
+		processInput(window, deltaTime);
+		
+		drawScene(window); //Wykonaj procedurę rysującą
+		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
-	freeOpenGLProgram();
+	freeOpenGLProgram(window);
+
+	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
 	exit(EXIT_SUCCESS);
 }

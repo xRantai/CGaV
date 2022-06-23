@@ -13,24 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="physics">
-      <UniqueIdentifier>{96ff4abe-a2ef-4ac2-acaf-4e112d9526f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="io">
-      <UniqueIdentifier>{4dc706f2-ba10-41ca-8d6e-f9785b671263}</UniqueIdentifier>
+      <UniqueIdentifier>{e1a49225-2f52-4b74-b613-22bc74121148}</UniqueIdentifier>
     </Filter>
-    <Filter Include="graphics">
-      <UniqueIdentifier>{f89a90bd-c7d5-4697-b66a-2ba27ae0ee36}</UniqueIdentifier>
+    <Filter Include="physics">
+      <UniqueIdentifier>{40682b6d-d677-46ab-ba33-a7f93f99161e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="allmodels.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="constants.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="cube.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="lodepng.h">
@@ -39,19 +30,7 @@
     <ClInclude Include="model.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="sphere.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="teapot.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="torus.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="shaderprogram.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="myCube.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="model_loader.h">
@@ -60,38 +39,20 @@
     <ClInclude Include="LoadedModel.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\bio_szkielet_07_win\mouse.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\bio_szkielet_07_win\camera.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\bio_szkielet_07_win\keyboard.h">
+      <Filter>io</Filter>
+    </ClInclude>
     <ClInclude Include="bounds.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="rigidbody.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="mouse.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="keyboard.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="screen.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="lodepng.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -104,44 +65,20 @@
     <ClCompile Include="shaderprogram.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="sphere.cpp">
+    <ClCompile Include="LoadedModel.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="teapot.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="torus.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="bounds.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="rigidbody.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="mouse.cpp">
+    <ClCompile Include="camera.cpp">
       <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="keyboard.cpp">
       <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
+    <ClCompile Include="mouse.cpp">
       <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="screen.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="texture.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadedModel.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="mesh.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="bounds.cpp">
+      <Filter>physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
