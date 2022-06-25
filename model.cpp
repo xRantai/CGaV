@@ -1,13 +1,17 @@
 #include "model.h"
 
+
+
 Model::Model() {}
 
-Model::Model(std::string plik, const char* texture)  {
+Model::Model(std::string plik, const char* texture, BoundTypes boundType) 
+	: boundType(boundType) {
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
 	std::vector< glm::vec4 > normals;
 	std::vector<unsigned int> indices;
+	this->material = Material::emerald;
 
 	const aiScene* scene = importer.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
 	std::cout << importer.GetErrorString() << std::endl;
