@@ -42,15 +42,7 @@
     <ClCompile Include="shaderprogram.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="f_colored.glsl" />
-    <None Include="f_constant.glsl" />
-    <None Include="f_lambert.glsl" />
-    <None Include="f_lamberttextured.glsl" />
     <None Include="f_textured.glsl" />
-    <None Include="v_colored.glsl" />
-    <None Include="v_constant.glsl" />
-    <None Include="v_lambert.glsl" />
-    <None Include="v_lamberttextured.glsl" />
     <None Include="v_textured.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

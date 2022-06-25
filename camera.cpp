@@ -31,7 +31,7 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 	glm::vec3 front, right;
 
 	/*
-		Calculating the vectors irrelevant to yaw
+		Calculating the vectors irrelevant to pitch
 	*/
 
 	front.x = cos(glm::radians(yaw));

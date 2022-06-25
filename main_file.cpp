@@ -134,7 +134,6 @@ void initOpenGLProgram(GLFWwindow* window) {
 	chest = Model("chest.obj", "chest.png");
 }
 
-
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
     freeShaders();
