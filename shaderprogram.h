@@ -21,35 +21,34 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
-
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "stdio.h"
-
+#include <string>
 
 
 class ShaderProgram {
 private:
 	GLuint shaderProgram; //Uchwyt reprezentujący program cieniujacy
 	GLuint vertexShader; //Uchwyt reprezentujący vertex shader
-	GLuint geometryShader; //Uchwyt reprezentujący geometry shader
 	GLuint fragmentShader; //Uchwyt reprezentujący fragment shader
+
 	char* readFile(const char* fileName); //metoda wczytująca plik tekstowy do tablicy znaków
 	GLuint loadShader(GLenum shaderType,const char* fileName); //Metoda wczytuje i kompiluje shader, a następnie zwraca jego uchwyt
 public:
-	ShaderProgram(const char* vertexShaderFile,const char* geometryShaderFile,const char* fragmentShaderFile);
+	ShaderProgram(const char* vertexShaderFile, const char* fragmentShaderFile);
 	~ShaderProgram();
+
 	void use(); //Włącza wykorzystywanie programu cieniującego
 	GLuint u(const char* variableName); //Pobiera numer slotu związanego z daną zmienną jednorodną
 	GLuint a(const char* variableName); //Pobiera numer slotu związanego z danym atrybutem
+
+	void set3Float(const std::string& name, glm::vec3 v);
+	void set3Float(const std::string& name, float v1, float v2, float v3);
+	void set4Float(const std::string& name, float v1, float v2, float v3, float v4);
 };
 
-
-
-extern ShaderProgram* spConstant;
-extern ShaderProgram* spLambert;
 extern ShaderProgram* spTextured;
-extern ShaderProgram* spColored;
-extern ShaderProgram* spLambertTextured;
 
 void initShaders();
 void freeShaders();
