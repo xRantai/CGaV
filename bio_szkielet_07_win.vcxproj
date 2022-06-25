@@ -27,6 +27,7 @@
     <ClInclude Include="lodepng.h" />
     <ClInclude Include="model_loader.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="rigidbody.h" />
     <ClInclude Include="shaderprogram.h" />
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +38,7 @@
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
   </ItemGroup>
   <ItemGroup>

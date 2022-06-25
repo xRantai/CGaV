@@ -28,25 +28,31 @@ void Camera::updateCameraDirection(double dx, double dy) {
 
 void Camera::updateCameraPos(CameraDirection direction, double dt) {
 	float velocity = (float)dt * speed;
+	glm::vec3 front, right;
+
+	/*
+		Calculating the vectors irrelevant to yaw
+	*/
+
+	front.x = cos(glm::radians(yaw));
+	front.y = 0;
+	front.z = sin(glm::radians(yaw));
+
+	front = glm::normalize(front);
+	right = glm::normalize(glm::cross(front, worldUp));
 
 	switch (direction) {
 	case CameraDirection::FORWARD:
-		cameraPos += cameraFront * velocity;
+		cameraPos += front * velocity;
 		break;
 	case CameraDirection::BACKWARD:
-		cameraPos -= cameraFront * velocity;
+		cameraPos -= front * velocity;
 		break;
 	case CameraDirection::RIGHT:
-		cameraPos += cameraRight * velocity;
+		cameraPos += right * velocity;
 		break;
 	case CameraDirection::LEFT:
-		cameraPos -= cameraRight * velocity;
-		break;
-	case CameraDirection::UP:
-		cameraPos += cameraUp * velocity;
-		break;
-	case CameraDirection::DOWN:
-		cameraPos -= cameraUp * velocity;
+		cameraPos -= right * velocity;
 		break;
 	}
 }

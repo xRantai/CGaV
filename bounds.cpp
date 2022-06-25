@@ -1,5 +1,6 @@
 #include "bounds.h"
 
+BoundingRegion::BoundingRegion() {}
 BoundingRegion::BoundingRegion(BoundTypes type) 
 	: type(type) {}
 BoundingRegion::BoundingRegion(glm::vec3 center, float radius)

@@ -141,8 +141,8 @@ void freeOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 	glDeleteTextures(1, &tex);
 	glDeleteTextures(1, &tex2);
+	glDeleteTextures(1, &tex3);
 }
-
 
 void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 
@@ -168,7 +168,6 @@ void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 	glDisableVertexAttribArray(spTextured->a("vertex"));
 	glDisableVertexAttribArray(spTextured->a("color"));
 }
-
 
 void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k) {
 	for (int i = 0; i < k; i++) {
@@ -204,7 +203,6 @@ glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, G
 	}
 	return M;
 }
-
 
 void drawfirstfloor(glm::mat4 P, glm::mat4 V) {
 	glm::mat4 M = glm::mat4(1.0f); //hole drawing

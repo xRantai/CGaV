@@ -4,12 +4,19 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
+
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#include <rigidbody.h>
+#include <bounds.h>
+
 class Model{
 public:
+	RigidBody rb;
+	BoundingRegion br;
+
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
 	std::vector< glm::vec4 > normals;
