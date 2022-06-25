@@ -14,7 +14,7 @@ Powszechnej Licencji Publicznej GNU.
 Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz
 Powszechnej Licencji Publicznej GNU(GNU General Public License);
 jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple
-Place, Fifth Floor, Boston, MA  02110 - 1301  USA
+Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 */
 
 #define GLM_FORCE_RADIANS
@@ -42,14 +42,8 @@ Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-GLuint tex;
-GLuint tex2;
-GLuint tex3;
-
-Model wall;
-Model floor_model;
-Model hole;
-Model chest;
+std::vector<GLuint> tex;
+std::vector<Model> model;
 
 
 //Procedura obsługi błędów
@@ -81,12 +75,6 @@ void processInput(GLFWwindow* window, double dt) {
 	}
 	if (Keyboard::key(GLFW_KEY_A)) {
 		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
-	}
-	if (Keyboard::key(GLFW_KEY_SPACE)) {
-		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
-	}
-	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
-		Camera::camera.updateCameraPos(CameraDirection::DOWN, dt);
 	}
 }
 
@@ -124,23 +112,33 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback); // Obsługa myszki
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Wyłaczenie graficznej myszki w oknie
 
-	tex = readTexture("texture.png");
-	tex2 = readTexture("stoneFloor_Albedo.png");
-	tex3 = readTexture("chest.png");
+	/*
+		Tworzenie uchwytów tekstur
+	*/
+	tex.push_back(readTexture("texture.png"));
+	tex.push_back(readTexture("stoneFloor_Albedo.png"));
+	tex.push_back(readTexture("chest.png"));
 
-	wall = Model("wall.obj", "texture.png");
-	floor_model = Model("floor.obj", "stoneFloor_Albedo.png");
-	hole = Model("hole.obj", "stoneFloor_Albedo.png");
-	chest = Model("chest.obj", "chest.png");
+	/*
+		Tworzenie modeli
+	*/
+	model.push_back(Model("wall.obj", "texture.png"));
+	model.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
+	model.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
+	model.push_back(Model("chest.obj", "chest.png"));
 }
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
     freeShaders();
-    //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
-	glDeleteTextures(1, &tex);
-	glDeleteTextures(1, &tex2);
-	glDeleteTextures(1, &tex3);
+    
+	/*
+		Usuńwszystkie uchwyty tekstur
+	*/
+
+	for (int i = 0; i < tex.size(); i++) {
+		glDeleteTextures(1, &tex[i]);
+	}
 }
 
 void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
@@ -208,80 +206,80 @@ glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, G
 }
 
 void drawfirstfloor(glm::mat4 P, glm::mat4 V) {
-	glm::mat4 M = glm::mat4(1.0f); //hole drawing
+	glm::mat4 M = glm::mat4(1.0f); //model[2] drawing
 	M = glm::translate(M, glm::vec3(1.1f, -0.15f, -2.7f));
 	M = glm::scale(M, glm::vec3(1.2f, 1.2f, 1.2f));
-	draw(P, V, M, hole, tex2);
+	draw(P, V, M, model[2], tex[1]);
 
 	M = glm::mat4(1.0f); //ceiling drawing
 	M = glm::translate(M, glm::vec3(8.0f, 1.8f, 6.5f));
 	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
-	M = drawmodularfloor(P, V, M, floor_model, tex2, 7, 7);
+	M = drawmodularfloor(P, V, M, model[1], tex[1], 7, 7);
 
-	M = glm::mat4(1.0f); //floor drawing
+	M = glm::mat4(1.0f); //model[1] drawing
 	M = glm::translate(M, glm::vec3(8.0f, 0.0f, 6.5f));
 	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
-	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
+	M = drawmodularfloor(P, V, M, model[1], tex[1], 3, 7);
 	for (int j = 0; j < 4; j++) {
-		draw(P, V, M, floor_model, tex2);
+		draw(P, V, M, model[1], tex[1]);
 		M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 	}
 	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 	for (int j = 0; j < 2; j++) {
-		draw(P, V, M, floor_model, tex2);
+		draw(P, V, M, model[1], tex[1]);
 		M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 	}
 	M = glm::translate(M, glm::vec3(-1.0f, 0.0f, 1.0f * 7));
-	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
+	M = drawmodularfloor(P, V, M, model[1], tex[1], 3, 7);
 	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 
 	M = glm::mat4(1.0f); //walls drawing
 	M = glm::scale(M, glm::vec3(1.5f, 1.5f, 1.5f));
 	M = glm::translate(M, glm::vec3(1.0f, 0.25f, 2.0f));
-	drawmodularwall(P, V, M, wall, tex, 4);
+	drawmodularwall(P, V, M, model[0], tex[0], 4);
 	glm::mat4 Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 3);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 3);
 
 	M = glm::rotate(M, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.57f, 0.0f, 0.80f));
-	drawmodularwall(P, V, M, wall, tex, 1);
+	drawmodularwall(P, V, M, model[0], tex[0], 1);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, M, wall, tex, 2);
+	drawmodularwall2(P, V, M, model[0], tex[0], 2);
 
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -2.45f));
-	drawmodularwall2(P, V, M, wall, tex, 2);
+	drawmodularwall2(P, V, M, model[0], tex[0], 2);
 
 
 	M = glm::translate(M, glm::vec3(-3.0f, 0.0f, 0.0f));
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, M, wall, tex, 1);
+	drawmodularwall2(P, V, M, model[0], tex[0], 1);
 
 
 	Mt = glm::mat4(M);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
-	drawmodularwall2(P, V, M, wall, tex, 6);
+	drawmodularwall2(P, V, M, model[0], tex[0], 6);
 
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -8.45f));
-	drawmodularwall2(P, V, M, wall, tex, 2);
+	drawmodularwall2(P, V, M, model[0], tex[0], 2);
 
 
 	M = glm::translate(M, glm::vec3(-3.0f, 0.0f, 0.0f));
@@ -290,243 +288,243 @@ void drawfirstfloor(glm::mat4 P, glm::mat4 V) {
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 2.30f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-2.25f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 1);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 2.3f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
-	drawmodularwall2(P, V, Mt, wall, tex, 2);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 2);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
-	drawmodularwall2(P, V, Mt, wall, tex, 1);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.8f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
-	drawmodularwall2(P, V, M, wall, tex, 5);
+	drawmodularwall2(P, V, M, model[0], tex[0], 5);
 
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -6.95f));
-	drawmodularwall2(P, V, M, wall, tex, 7);
+	drawmodularwall2(P, V, M, model[0], tex[0], 7);
 
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -9.95f));
-	drawmodularwall2(P, V, M, wall, tex, 7);
+	drawmodularwall2(P, V, M, model[0], tex[0], 7);
 
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -9.95f));
-	drawmodularwall2(P, V, M, wall, tex, 1);
+	drawmodularwall2(P, V, M, model[0], tex[0], 1);
 }
 
 void drawsecondfloor(glm::mat4 P, glm::mat4 V) {
 	glm::mat4 M = glm::mat4(1.0f);
 
-	M = glm::translate(M, glm::vec3(8.0f, -1.8f, 6.5f)); //floor drawing
+	M = glm::translate(M, glm::vec3(8.0f, -1.8f, 6.5f)); //model[1] drawing
 	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
-	M = drawmodularfloor(P, V, M, floor_model, tex2, 7, 7);
+	M = drawmodularfloor(P, V, M, model[1], tex[1], 7, 7);
 
 	M = glm::mat4(1.0f); //walls drawing
 	M = glm::translate(M, glm::vec3(-5.5f, -1.45f, 0.75f));
 	M = glm::scale(M, glm::vec3(1.5f, 1.5f, 1.5f));
 	M = glm::translate(M, glm::vec3(9.10f, 0.0f, -1.55f));
-	drawmodularwall2(P, V, M, wall, tex, 2);
+	drawmodularwall2(P, V, M, model[0], tex[0], 2);
 
 	glm::mat4 Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
-	drawmodularwall2(P, V, Mt, wall, tex, 1);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.80f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
-	drawmodularwall2(P, V, Mt, wall, tex, 1);
+	drawmodularwall2(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, -0.80f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, M, wall, tex, 3);
+	drawmodularwall(P, V, M, model[0], tex[0], 3);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 3.57f));
-	drawmodularwall(P, V, M, wall, tex, 7);
+	drawmodularwall(P, V, M, model[0], tex[0], 7);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
-	drawmodularwall(P, V, M, wall, tex, 7);
+	drawmodularwall(P, V, M, model[0], tex[0], 7);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 3.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt, wall, tex, 2);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 2);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 5.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 2);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 2);
 
 	glm::mat4 Mt2 = glm::mat4(Mt);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt, wall, tex, 2);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 2);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 2);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 2);
 
 	glm::mat4 Mt3 = glm::mat4(Mt);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt3 = glm::rotate(Mt3, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt3 = glm::translate(Mt3, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt3, wall, tex, 2);
+	drawmodularwall(P, V, Mt3, model[0], tex[0], 2);
 
 	Mt3 = glm::rotate(Mt3, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt3 = glm::translate(Mt3, glm::vec3(0.8f, 0.0f, 2.07f));
-	drawmodularwall(P, V, Mt3, wall, tex, 1);
+	drawmodularwall(P, V, Mt3, model[0], tex[0], 1);
 
 	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -2.25f));
-	drawmodularwall(P, V, Mt2, wall, tex, 1);
+	drawmodularwall(P, V, Mt2, model[0], tex[0], 1);
 
 	Mt2 = glm::rotate(Mt2, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt2 = glm::translate(Mt2, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt2, wall, tex, 1);
+	drawmodularwall(P, V, Mt2, model[0], tex[0], 1);
 
 	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt2, wall, tex, 1);
+	drawmodularwall(P, V, Mt2, model[0], tex[0], 1);
 
 	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt2, wall, tex, 2);
+	drawmodularwall(P, V, Mt2, model[0], tex[0], 2);
 
 	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -2.25f));
-	drawmodularwall(P, V, Mt2, wall, tex, 1);
+	drawmodularwall(P, V, Mt2, model[0], tex[0], 1);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
-	drawmodularwall(P, V, M, wall, tex, 7);
+	drawmodularwall(P, V, M, model[0], tex[0], 7);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 5.07f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
-	drawmodularwall(P, V, M, wall, tex, 4);
+	drawmodularwall(P, V, M, model[0], tex[0], 4);
 
 	Mt = glm::mat4(M);
 	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
-	drawmodularwall(P, V, Mt, wall, tex, 1);
+	drawmodularwall(P, V, Mt, model[0], tex[0], 1);
 
 	M = glm::mat4(1.0f);
 	M = glm::translate(M, glm::vec3(8.5f, -1.8f, 6.4f));
 	M = glm::scale(M, glm::vec3(0.05f, 0.05f, 0.05f));
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
-	draw(P, V, M, chest, tex3);
+	draw(P, V, M, model[3], tex[2]);
 }
 
 //Procedura rysująca zawartość sceny
