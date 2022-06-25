@@ -1,30 +1,41 @@
-/*
-Niniejszy program jest wolnym oprogramowaniem; możesz go
-rozprowadzać dalej i / lub modyfikować na warunkach Powszechnej
-Licencji Publicznej GNU, wydanej przez Fundację Wolnego
-Oprogramowania - według wersji 2 tej Licencji lub(według twojego
-wyboru) którejś z późniejszych wersji.
-
-Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on
-użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej
-gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH
-ZASTOSOWAŃ.W celu uzyskania bliższych informacji sięgnij do
-Powszechnej Licencji Publicznej GNU.
-
-Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz
-Powszechnej Licencji Publicznej GNU(GNU General Public License);
-jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple
-Place, Fifth Floor, Boston, MA  02110 - 1301  USA
-*/
-
 #include "model.h"
 
-namespace Models {
-	void Model::drawWire(bool smooth) {
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+Model::Model() {}
 
-		drawSolid(smooth);
+Model::Model(std::string plik, const char* texture)  {
+	Assimp::Importer importer;
+	std::vector< glm::vec4 > vertices;
+	std::vector< glm::vec2 > texCoords;
+	std::vector< glm::vec4 > normals;
+	std::vector<unsigned int> indices;
 
-		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	const aiScene* scene = importer.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+	std::cout << importer.GetErrorString() << std::endl;
+
+	auto mesh = scene->mMeshes[0];
+
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D vertex = mesh->mVertices[i];
+		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
+
+		aiVector3D normal = mesh->mNormals[i];
+		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
+
+		aiVector3D texCoord = mesh->mTextureCoords[0][i];
+		texCoords.push_back(glm::vec2(texCoord.x, texCoord.y));
 	}
+
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace& face = mesh->mFaces[i];
+
+		for (int j = 0; j < face.mNumIndices; j++) {
+			indices.push_back(face.mIndices[j]);
+		}
+	}
+
+	this->vertices = vertices;
+	this->indices = indices;
+	this->texCoords = texCoords;
+	this->normals = normals;
+	this->texture = texture;
 }

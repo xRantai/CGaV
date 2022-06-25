@@ -1,46 +1,23 @@
-/*
-Niniejszy program jest wolnym oprogramowaniem; możesz go
-rozprowadzać dalej i / lub modyfikować na warunkach Powszechnej
-Licencji Publicznej GNU, wydanej przez Fundację Wolnego
-Oprogramowania - według wersji 2 tej Licencji lub(według twojego
-wyboru) którejś z późniejszych wersji.
+#ifndef LoadedModel_H
+#define LoadedModel_H
 
-Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on
-użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej
-gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH
-ZASTOSOWAŃ.W celu uzyskania bliższych informacji sięgnij do
-Powszechnej Licencji Publicznej GNU.
-
-Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz
-Powszechnej Licencji Publicznej GNU(GNU General Public License);
-jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple
-Place, Fifth Floor, Boston, MA  02110 - 1301  USA
-*/
-
-#ifndef MODEL_H
-#define MODEL_H
-
-
-#include <GL/glew.h>
+#include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
-#include "constants.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
-namespace Models {
+class Model{
+public:
+	std::vector< glm::vec4 > vertices;
+	std::vector< glm::vec2 > texCoords;
+	std::vector< glm::vec4 > normals;
+	std::vector<unsigned int> indices;
+	const char* texture;
 
-	class Model {
-		public:
-			int vertexCount;
-			float *vertices;
-			float *normals;
-			float *vertexNormals;
-			float *texCoords;
-			float *colors;
-
-			virtual void drawSolid(bool smooth)=0;
-			virtual void drawWire(bool smooth=false);
-	};
-}
+	Model();
+	Model(std::string plik, const char* texture);
+};
 
 #endif

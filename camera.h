@@ -30,16 +30,13 @@ public:
 	float yaw; // x-axis
 	float pitch; // y-axis
 	float speed;
-	float zoom;
 
 	Camera(glm::vec3 position);
 
 	void updateCameraDirection(double dx, double dy); // moving mouse
 	void updateCameraPos(CameraDirection direction, double dt); // keyboard input
-	void updateCameraZoom(double dy); // scroll wheel
 
 	glm::mat4 getViewMatrix();
-	float getZoom();
 
 private:
 	void updateCameraVectors();

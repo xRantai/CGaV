@@ -19,25 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\bio_szkielet_07_win\camera.h" />
-    <ClInclude Include="..\..\bio_szkielet_07_win\keyboard.h" />
-    <ClInclude Include="..\..\bio_szkielet_07_win\mouse.h" />
     <ClInclude Include="bounds.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
-    <ClInclude Include="LoadedModel.h" />
-    <ClInclude Include="lodepng.h" />
+    <ClInclude Include="keyboard.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="model_loader.h" />
+    <ClInclude Include="mouse.h" />
     <ClInclude Include="shaderprogram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bounds.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="keyboard.cpp" />
-    <ClCompile Include="LoadedModel.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
-    <ClCompile Include="model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
   </ItemGroup>

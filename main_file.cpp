@@ -32,10 +32,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "model_loader.h"
 
 #include "lodepng.h"
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-#include "LoadedModel.h"
+#include "Model.h"
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -47,9 +44,12 @@ float lastFrame = 0.0f;
 
 GLuint tex;
 GLuint tex2;
+GLuint tex3;
 
-LoadedModel wall;
-LoadedModel floor_model;
+Model wall;
+Model floor_model;
+Model hole;
+Model chest;
 
 
 //Procedura obsługi błędów
@@ -113,40 +113,6 @@ GLuint readTexture(const char* filename) {
 	return tex;
 }
 
-LoadedModel loadModel(std::string plik, const char* texture) {
-	Assimp::Importer impoerter;
-	std::vector< glm::vec4 > vertices;
-	std::vector< glm::vec2 > texCoords;
-	std::vector< glm::vec4 > normals;
-	std::vector<unsigned int> indices;
-
-	const aiScene* scene = impoerter.ReadFile(plik, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
-	std::cout << impoerter.GetErrorString() << std::endl;
-
-	auto mesh = scene->mMeshes[0];
-
-	for (int i = 0; i < mesh->mNumVertices; i++) {
-		aiVector3D vertex = mesh->mVertices[i];
-		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
-
-		aiVector3D normal = mesh->mNormals[i];
-		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
-
-		aiVector3D texCoord = mesh->mTextureCoords[0][i];
-		texCoords.push_back(glm::vec2(texCoord.x, texCoord.y));
-	}
-
-	for (int i = 0; i < mesh->mNumFaces; i++) {
-		aiFace& face = mesh->mFaces[i];
-
-		for (int j = 0; j < face.mNumIndices; j++) {
-			indices.push_back(face.mIndices[j]);
-		}
-	}
-
-	return LoadedModel(vertices, texCoords, normals, indices, texture);
-}
-
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
@@ -160,9 +126,12 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	tex = readTexture("texture.png");
 	tex2 = readTexture("stoneFloor_Albedo.png");
+	tex3 = readTexture("chest.png");
 
-	wall = loadModel("wall.obj", "texture.png");
-	floor_model = loadModel("floor.obj", "stoneFloor_Albedo.png");
+	wall = Model("wall.obj", "texture.png");
+	floor_model = Model("floor.obj", "stoneFloor_Albedo.png");
+	hole = Model("hole.obj", "stoneFloor_Albedo.png");
+	chest = Model("chest.obj", "chest.png");
 }
 
 
@@ -175,7 +144,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 
-void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture) {
+void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 
 	spTextured->use();
 
@@ -201,14 +170,14 @@ void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint textu
 }
 
 
-void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k) {
+void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k) {
 	for (int i = 0; i < k; i++) {
 		draw(P, V, M, model, texture);
 		M = glm::translate(M, glm::vec3(1.5f, 0.0f, 0.0f));
 	}
 }
 
-void drawmodularwall2(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k) {
+void drawmodularwall2(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k) {
 	for (int i = 0; i < k; i++) {
 		draw(P, V, M, model, texture);
 		M = glm::translate(M, glm::vec3(-1.5f, 0.0f, 0.0f));
@@ -225,7 +194,7 @@ void turnright(glm::mat4 Mt) {
 	Mt = glm::translate(Mt, glm::vec3(1.0f, 0.0f, 0.75f));
 }
 
-glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel model, GLuint texture, int k, int m) {
+glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k, int m) {
 	for (int i = 0; i < k; i++) {
 		for (int j = 0; j < m; j++) {
 			draw(P, V, M, model, texture);
@@ -236,15 +205,19 @@ glm::mat4 drawmodularfloor(glm::mat4 P, glm::mat4 V, glm::mat4 M, LoadedModel mo
 	return M;
 }
 
-//Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
-	//************Tutaj umieszczaj kod rysujący obraz******************l
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
-	glm::mat4 M = glm::mat4(1.0f); //Zainicjuj macierz modelu macierzą jednostkową
-	glm::mat4 V = Camera::camera.getViewMatrix();
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
+void drawfirstfloor(glm::mat4 P, glm::mat4 V) {
+	glm::mat4 M = glm::mat4(1.0f); //hole drawing
+	M = glm::translate(M, glm::vec3(1.1f, -0.15f, -2.7f));
+	M = glm::scale(M, glm::vec3(1.2f, 1.2f, 1.2f));
+	draw(P, V, M, hole, tex2);
 
+	M = glm::mat4(1.0f); //ceiling drawing
+	M = glm::translate(M, glm::vec3(8.0f, 1.8f, 6.5f));
+	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
+	M = drawmodularfloor(P, V, M, floor_model, tex2, 7, 7);
+
+	M = glm::mat4(1.0f); //floor drawing
 	M = glm::translate(M, glm::vec3(8.0f, 0.0f, 6.5f));
 	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
 	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
@@ -252,7 +225,6 @@ void drawScene(GLFWwindow* window) {
 		draw(P, V, M, floor_model, tex2);
 		M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 	}
-
 	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 	for (int j = 0; j < 2; j++) {
 		draw(P, V, M, floor_model, tex2);
@@ -262,7 +234,7 @@ void drawScene(GLFWwindow* window) {
 	M = drawmodularfloor(P, V, M, floor_model, tex2, 3, 7);
 	M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
 
-	M = glm::mat4(1.0f);
+	M = glm::mat4(1.0f); //walls drawing
 	M = glm::scale(M, glm::vec3(1.5f, 1.5f, 1.5f));
 	M = glm::translate(M, glm::vec3(1.0f, 0.25f, 2.0f));
 	drawmodularwall(P, V, M, wall, tex, 4);
@@ -390,6 +362,182 @@ void drawScene(GLFWwindow* window) {
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::translate(M, glm::vec3(-0.75f, 0.0f, -9.95f));
 	drawmodularwall2(P, V, M, wall, tex, 1);
+}
+
+void drawsecondfloor(glm::mat4 P, glm::mat4 V) {
+	glm::mat4 M = glm::mat4(1.0f);
+
+	M = glm::translate(M, glm::vec3(8.0f, -1.8f, 6.5f)); //floor drawing
+	M = glm::scale(M, glm::vec3(2.3f, 2.3f, 2.3f));
+	M = drawmodularfloor(P, V, M, floor_model, tex2, 7, 7);
+
+	M = glm::mat4(1.0f); //walls drawing
+	M = glm::translate(M, glm::vec3(-5.5f, -1.45f, 0.75f));
+	M = glm::scale(M, glm::vec3(1.5f, 1.5f, 1.5f));
+	M = glm::translate(M, glm::vec3(9.10f, 0.0f, -1.55f));
+	drawmodularwall2(P, V, M, wall, tex, 2);
+
+	glm::mat4 Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -2.45f));
+	drawmodularwall2(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, 0.80f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.75f, 0.0f, -0.95f));
+	drawmodularwall2(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(-0.57f, 0.0f, -0.80f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, M, wall, tex, 3);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 3.57f));
+	drawmodularwall(P, V, M, wall, tex, 7);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
+	drawmodularwall(P, V, M, wall, tex, 7);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 3.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt, wall, tex, 2);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 5.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 2);
+
+	glm::mat4 Mt2 = glm::mat4(Mt);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt, wall, tex, 2);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 2);
+
+	glm::mat4 Mt3 = glm::mat4(Mt);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 2.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt3 = glm::rotate(Mt3, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt3 = glm::translate(Mt3, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt3, wall, tex, 2);
+
+	Mt3 = glm::rotate(Mt3, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt3 = glm::translate(Mt3, glm::vec3(0.8f, 0.0f, 2.07f));
+	drawmodularwall(P, V, Mt3, wall, tex, 1);
+
+	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -2.25f));
+	drawmodularwall(P, V, Mt2, wall, tex, 1);
+
+	Mt2 = glm::rotate(Mt2, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt2 = glm::translate(Mt2, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt2, wall, tex, 1);
+
+	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt2, wall, tex, 1);
+
+	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt2, wall, tex, 2);
+
+	Mt2 = glm::rotate(Mt2, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt2 = glm::translate(Mt2, glm::vec3(0.95f, 0.0f, -2.25f));
+	drawmodularwall(P, V, Mt2, wall, tex, 1);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
+	drawmodularwall(P, V, M, wall, tex, 7);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 5.07f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, -3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.95f, 0.0f, -0.75f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::translate(M, glm::vec3(0.8f, 0.0f, 9.57f));
+	drawmodularwall(P, V, M, wall, tex, 4);
+
+	Mt = glm::mat4(M);
+	Mt = glm::rotate(Mt, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mt = glm::translate(Mt, glm::vec3(0.8f, 0.0f, 0.57f));
+	drawmodularwall(P, V, Mt, wall, tex, 1);
+
+	M = glm::mat4(1.0f);
+	M = glm::translate(M, glm::vec3(8.5f, -1.8f, 6.4f));
+	M = glm::scale(M, glm::vec3(0.05f, 0.05f, 0.05f));
+	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+	draw(P, V, M, chest, tex3);
+}
+
+//Procedura rysująca zawartość sceny
+void drawScene(GLFWwindow* window) {
+	//************Tutaj umieszczaj kod rysujący obraz******************l
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
+
+	glm::mat4 V = Camera::camera.getViewMatrix();
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
+
+	drawfirstfloor(P, V);
+	drawsecondfloor(P, V);
 
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
