@@ -1,21 +1,24 @@
 #version 330
 
+//Atrybuty
+in vec3 aPos; //wspolrzedne wierzcholka w przestrzeni modelu
+in vec3 aNormal;
+in vec2 aTexCoord; //wspó³rzêdne teksturowania
+
 //Zmienne jednorodne
 uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
 
-
-
-//Atrybuty
-layout (location=0) in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
-layout (location=2) in vec2 texCoord; //wspó³rzêdne teksturowania
-
-
 //Zmienne interpolowane
-out vec2 i_tc;
+out vec3 fragPos;
+out vec3 normal;
+out vec2 texCoord;
 
 void main(void) {
-    gl_Position=P*V*M*vertex;
-    i_tc=texCoord;
+    fragPos = vec3(M * vec4(aPos, 1.0));
+    normal = mat3(transpose(inverse(M))) * aNormal;
+
+    gl_Position = P * V * vec4(fragPos, 1.0);
+    texCoord = aTexCoord;
 }

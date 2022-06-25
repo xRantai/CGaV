@@ -152,11 +152,14 @@ void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 	glUniformMatrix4fv(spTextured->u("M"), 1, false, glm::value_ptr(M)); //Załaduj do programu cieniującego macierz modelu
 
 
-	glEnableVertexAttribArray(spTextured->a("vertex"));
-	glVertexAttribPointer(spTextured->a("vertex"), 4, GL_FLOAT, false, 0, model.vertices.data()); //Współrzędne wierzchołków bierz z tablicy myCubeVertices
+	glEnableVertexAttribArray(spTextured->a("aPos"));
+	glVertexAttribPointer(spTextured->a("aPos"), 4, GL_FLOAT, false, 0, model.vertices.data()); //Współrzędne wierzchołków bierz z tablicy myCubeVertices
 
-	glEnableVertexAttribArray(spTextured->a("texCoord"));
-	glVertexAttribPointer(spTextured->a("texCoord"), 2, GL_FLOAT, false, 0, model.texCoords.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(spTextured->a("aNormal"));
+	glVertexAttribPointer(spTextured->a("aNormal"), 4, GL_FLOAT, false, 0, model.normals.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
+
+	glEnableVertexAttribArray(spTextured->a("aTexCoord"));
+	glVertexAttribPointer(spTextured->a("aTexCoord"), 2, GL_FLOAT, false, 0, model.texCoords.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -164,8 +167,9 @@ void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 
 	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, model.indices.data());
 
-	glDisableVertexAttribArray(spTextured->a("vertex"));
-	glDisableVertexAttribArray(spTextured->a("color"));
+	glDisableVertexAttribArray(spTextured->a("aPos"));
+	glDisableVertexAttribArray(spTextured->a("aNormal"));
+	glDisableVertexAttribArray(spTextured->a("aTexCoord"));
 }
 
 void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k) {
