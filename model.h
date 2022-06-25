@@ -11,18 +11,11 @@
 
 #include <rigidbody.h>
 #include <bounds.h>
-#include "material.h"
 
 class Model{
 public:
-	BoundTypes boundType;
-
-	glm::vec3 pos;
-
 	RigidBody rb;
 	BoundingRegion br;
-
-	Material material;
 
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -31,7 +24,7 @@ public:
 	const char* texture;
 
 	Model();
-	Model(std::string plik, const char* texture, BoundTypes boundType = BoundTypes::AABB);
+	Model(std::string plik, const char* texture);
 };
 
 #endif

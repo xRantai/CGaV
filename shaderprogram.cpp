@@ -24,7 +24,7 @@ ShaderProgram* spTextured;
 
 
 void initShaders() {
-	spTextured = new ShaderProgram("v_textured.glsl", "f_textured.glsl");
+	spTextured = new ShaderProgram("v_textured.glsl", NULL, "f_textured.glsl");
 }
 
 void freeShaders() {
@@ -86,10 +86,19 @@ GLuint ShaderProgram::loadShader(GLenum shaderType,const char* fileName) {
 	//Zwróć uchwyt wygenerowanego shadera
 	return shader;
 }
-ShaderProgram::ShaderProgram(const char* vertexShaderFile, const char* fragmentShaderFile) {
+
+ShaderProgram::ShaderProgram(const char* vertexShaderFile,const char* geometryShaderFile,const char* fragmentShaderFile) {
 	//Wczytaj vertex shader
 	printf("Loading vertex shader...\n");
 	vertexShader=loadShader(GL_VERTEX_SHADER,vertexShaderFile);
+
+	//Wczytaj geometry shader
+	if (geometryShaderFile!=NULL) {
+		printf("Loading geometry shader...\n");
+		geometryShader=loadShader(GL_GEOMETRY_SHADER,geometryShaderFile);
+	} else {
+		geometryShader=0;
+	}
 
 	//Wczytaj fragment shader
 	printf("Loading fragment shader...\n");
@@ -99,8 +108,9 @@ ShaderProgram::ShaderProgram(const char* vertexShaderFile, const char* fragmentS
 	shaderProgram=glCreateProgram();
 
 	//Podłącz do niego shadery i zlinkuj program
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	glAttachShader(shaderProgram,vertexShader);
+	glAttachShader(shaderProgram,fragmentShader);
+	if (geometryShaderFile!=NULL) glAttachShader(shaderProgram,geometryShader);
 	glLinkProgram(shaderProgram);
 
 	//Pobierz log błędów linkowania i wyświetl
@@ -108,7 +118,7 @@ ShaderProgram::ShaderProgram(const char* vertexShaderFile, const char* fragmentS
 	int charsWritten  = 0;
 	char *infoLog;
 
-	glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &infologLength);
+	glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH,&infologLength);
 
 	if (infologLength > 1)
 	{
@@ -124,10 +134,12 @@ ShaderProgram::ShaderProgram(const char* vertexShaderFile, const char* fragmentS
 ShaderProgram::~ShaderProgram() {
 	//Odłącz shadery od programu
 	glDetachShader(shaderProgram, vertexShader);
+	if (geometryShader!=0) glDetachShader(shaderProgram, geometryShader);
 	glDetachShader(shaderProgram, fragmentShader);
 
 	//Wykasuj shadery
 	glDeleteShader(vertexShader);
+	if (geometryShader!=0) glDeleteShader(geometryShader);
 	glDeleteShader(fragmentShader);
 
 	//Wykasuj program
@@ -148,14 +160,4 @@ GLuint ShaderProgram::u(const char* variableName) {
 //Pobierz numer slotu odpowiadającego atrybutowi o nazwie variableName
 GLuint ShaderProgram::a(const char* variableName) {
 	return glGetAttribLocation(shaderProgram,variableName);
-}
-
-void ShaderProgram::set3Float(const std::string& name, glm::vec3 v){
-	set3Float(name, v.x, v.y, v.z);
-}
-void ShaderProgram::set3Float(const std::string& name, float v1, float v2, float v3){
-	glUniform3f(u(name.c_str()), v1, v2, v3);
-}
-void ShaderProgram::set4Float(const std::string& name, float v1, float v2, float v3, float v4){
-	glUniform4f(u(name.c_str()), v1, v2, v3, v4);
 }
