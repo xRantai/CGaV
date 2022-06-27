@@ -104,7 +104,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 void freeOpenGLProgram(GLFWwindow* window) {
 	freeShaders();
 
-	//delete &models; // usuwanie modeli WIP
+	models.clear(); // usuwanie modeli WIP
 }
 
 /*void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
