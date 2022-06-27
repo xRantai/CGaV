@@ -19,6 +19,13 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 
 #define GLM_FORCE_RADIANS
 
+/*
+	Pomoc naukowa do obiektów
+*/
+#define wall 0
+#define floor 1
+#define hole 2
+#define chest 3
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -31,7 +38,6 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 #include "model_loader.h"
 
-#include "lodepng.h"
 #include "Model.h"
 
 #include "keyboard.h"
@@ -42,8 +48,8 @@ Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-std::vector<GLuint> tex;
-std::vector<Model> model;
+std::vector<Model> modelTemplates;
+std::vector<Model> modele; // wszystkie renderowane modele
 
 
 //Procedura obsługi błędów
@@ -78,29 +84,6 @@ void processInput(GLFWwindow* window, double dt) {
 	}
 }
 
-GLuint readTexture(const char* filename) {
-	GLuint tex;
-	glActiveTexture(GL_TEXTURE0);
-
-	//Wczytanie do pamięci komputera
-	std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
-	unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
-	//Wczytaj obrazek
-	unsigned error = lodepng::decode(image, width, height, filename);
-
-	//Import do pamięci karty graficznej
-	glGenTextures(1, &tex); //Zainicjuj jeden uchwyt
-	glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
-	//Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)image.data());
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	return tex;
-}
-
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
     initShaders();
@@ -113,61 +96,47 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Wyłaczenie graficznej myszki w oknie
 
 	/*
-		Tworzenie uchwytów tekstur
-	*/
-	tex.push_back(readTexture("texture.png"));
-	tex.push_back(readTexture("stoneFloor_Albedo.png"));
-	tex.push_back(readTexture("chest.png"));
-
-	/*
 		Tworzenie modeli
 	*/
-	model.push_back(Model("wall.obj", "texture.png"));
-	model.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
-	model.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
-	model.push_back(Model("chest.obj", "chest.png"));
+	modelTemplates.push_back(Model("wall.obj", "texture.png"));
+	modelTemplates.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
+	modelTemplates.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
+	modelTemplates.push_back(Model("chest.obj", "chest.png"));
 }
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
     freeShaders();
-    
-	/*
-		Usuńwszystkie uchwyty tekstur
-	*/
 
-	for (int i = 0; i < tex.size(); i++) {
-		glDeleteTextures(1, &tex[i]);
-	}
 }
 
 void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 
-	spTextured->use();
+	shader->use();
 
-	glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P)); //Załaduj do programu cieniującego macierz rzutowania
-	glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V)); //Załaduj do programu cieniującego macierz widoku
-	glUniformMatrix4fv(spTextured->u("M"), 1, false, glm::value_ptr(M)); //Załaduj do programu cieniującego macierz modelu
+	glUniformMatrix4fv(shader->u("P"), 1, false, glm::value_ptr(P)); //Załaduj do programu cieniującego macierz rzutowania
+	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(V)); //Załaduj do programu cieniującego macierz widoku
+	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(M)); //Załaduj do programu cieniującego macierz modelu
 
 
-	glEnableVertexAttribArray(spTextured->a("aPos"));
-	glVertexAttribPointer(spTextured->a("aPos"), 4, GL_FLOAT, false, 0, model.vertices.data()); //Współrzędne wierzchołków bierz z tablicy myCubeVertices
+	glEnableVertexAttribArray(shader->a("aPos"));
+	glVertexAttribPointer(shader->a("aPos"), 4, GL_FLOAT, false, 0, model.vertices.data()); //Współrzędne wierzchołków bierz z tablicy myCubeVertices
 
-	glEnableVertexAttribArray(spTextured->a("aNormal"));
-	glVertexAttribPointer(spTextured->a("aNormal"), 4, GL_FLOAT, false, 0, model.normals.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("aNormal"));
+	glVertexAttribPointer(shader->a("aNormal"), 4, GL_FLOAT, false, 0, model.normals.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
 
-	glEnableVertexAttribArray(spTextured->a("aTexCoord"));
-	glVertexAttribPointer(spTextured->a("aTexCoord"), 2, GL_FLOAT, false, 0, model.texCoords.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("aTexCoord"));
+	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, model.texCoords.data()); //Współrzędne teksturowania bierz z tablicy myCubeTexCoords
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(spTextured->u("tex"), 0);
+	glUniform1i(shader->u("tex"), 0);
 
 	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, model.indices.data());
 
-	glDisableVertexAttribArray(spTextured->a("aPos"));
-	glDisableVertexAttribArray(spTextured->a("aNormal"));
-	glDisableVertexAttribArray(spTextured->a("aTexCoord"));
+	glDisableVertexAttribArray(shader->a("aPos"));
+	glDisableVertexAttribArray(shader->a("aNormal"));
+	glDisableVertexAttribArray(shader->a("aTexCoord"));
 }
 
 void drawmodularwall(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture, int k) {
@@ -532,8 +501,8 @@ void drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
-	glm::mat4 V = Camera::camera.getViewMatrix();
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
+	view = Camera::camera.getViewMatrix();
+	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 
 	drawfirstfloor(P, V);
 	drawsecondfloor(P, V);
