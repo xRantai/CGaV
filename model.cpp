@@ -1,7 +1,7 @@
 #include "model.h"
 
 Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: pos(pos), rotation(rotation), texture(texture) {
+	: pos(pos), rotation(rotation), scale(scale) {
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -39,7 +39,10 @@ Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rot
 	texture = readTexture(textureFile);
 }
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: pos(pos), rotation(rotation), vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texture(texture) {}
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texture(model.texture), pos(pos), rotation(rotation), scale(scale) {}
+Model::~Model() {
+	glDeleteTextures(1, &texture);
+}
 
 GLuint Model::readTexture(const char* textureFile) {
 	GLuint tex;
@@ -67,6 +70,7 @@ GLuint Model::readTexture(const char* textureFile) {
 void Model::render() {
 	glm::mat4 transformation = glm::mat4(1.0f);
 	transformation = glm::translate(transformation, pos);
+	transformation = glm::scale(transformation, scale);
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	shader->use();
@@ -95,6 +99,3 @@ void Model::render() {
 	glDisableVertexAttribArray(shader->a("aTexCoord"));
 }
 
-Model::~Model() {
-	glDeleteTextures(1, &texture);
-}

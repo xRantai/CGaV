@@ -49,7 +49,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 std::vector<Model> modelTemplates;
-std::vector<Model> modele; // wszystkie renderowane modele
+std::vector<Model> models; // wszystkie renderowane modele
 
 
 //Procedura obsługi błędów
@@ -96,18 +96,24 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Wyłaczenie graficznej myszki w oknie
 
 	/*
-		Tworzenie modeli
+		Tworzenie szablonów modeli
 	*/
 	modelTemplates.push_back(Model("wall.obj", "texture.png"));
 	modelTemplates.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
 	modelTemplates.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
 	modelTemplates.push_back(Model("chest.obj", "chest.png"));
+
+	/*
+		Tu wygeneruj pierwotną scenę AKA jak wygląda labirynt i wrzućwszystko do pojemnika, ewentualnie zrób osobną funkcję
+	*/
+	models.push_back(Model(modelTemplates[0], glm::vec3(1.0f, 2.0f, 3.0f), 0.0f, glm::vec3(1.0f)));
 }
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
 	freeShaders();
 
+	delete &models; // usuwanie modeli 
 }
 
 void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
@@ -498,11 +504,15 @@ void drawsecondfloor(glm::mat4 P, glm::mat4 V) {
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window) {
-	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix();
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
+
+	for (int i = 0; i < models.size(); i++) {
+		//models[i].update(); // zaktualizuj models (WIP)
+		models[i].render();
+	}
 
 	drawfirstfloor(perspective, view);
 	drawsecondfloor(perspective, view);
