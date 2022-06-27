@@ -27,11 +27,12 @@ class Model {
 public:
 	glm::vec3 pos;
 	float rotation;
-	GLuint texture;
 	glm::vec3 scale;
 
-	RigidBody rb;
-	BoundingRegion br;
+	GLuint texture;
+
+	RigidBody rb; // fizyka
+	BoundingRegion br; // kolizje
 
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;

@@ -9,5 +9,5 @@ out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej 
 in vec2 texCoord;
 
 void main(void) {
-	pixelColor=texture(tex,texCoord);
+	pixelColor=vec4(1,1,1,1);texture(tex,texCoord);
 }
