@@ -20,15 +20,15 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 
 
-ShaderProgram* spTextured;
+ShaderProgram* shader;
 
 
 void initShaders() {
-	spTextured = new ShaderProgram("v_textured.glsl", NULL, "f_textured.glsl");
+	shader = new ShaderProgram("v_textured.glsl", NULL, "f_textured.glsl");
 }
 
 void freeShaders() {
-	delete spTextured;
+	delete shader;
 }
 
 //Procedura wczytuje plik do tablicy znaków.

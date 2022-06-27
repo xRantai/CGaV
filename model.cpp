@@ -1,5 +1,8 @@
 #include "model.h"
 
+glm::mat4 perspective;
+glm::mat4 view;
+
 Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: pos(pos), rotation(rotation), scale(scale) {
 	Assimp::Importer importer;
@@ -13,7 +16,7 @@ Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rot
 
 	auto mesh = scene->mMeshes[0];
 
-	for (int i = 0; i < mesh->mNumVertices; i++) {
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 		aiVector3D vertex = mesh->mVertices[i];
 		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
 
@@ -24,10 +27,10 @@ Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rot
 		texCoords.push_back(glm::vec2(texCoord.x, texCoord.y));
 	}
 
-	for (int i = 0; i < mesh->mNumFaces; i++) {
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		aiFace& face = mesh->mFaces[i];
 
-		for (int j = 0; j < face.mNumIndices; j++) {
+		for (unsigned int j = 0; j < face.mNumIndices; j++) {
 			indices.push_back(face.mIndices[j]);
 		}
 	}
@@ -39,7 +42,7 @@ Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rot
 	texture = readTexture(textureFile);
 }
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texture(model.texture), pos(pos), rotation(rotation), scale(scale) {}
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texture(model.texture), pos(pos), rotation(rotation), scale(scale) {} 
 Model::~Model() {
 	glDeleteTextures(1, &texture);
 }
@@ -98,4 +101,3 @@ void Model::render() {
 	glDisableVertexAttribArray(shader->a("aNormal"));
 	glDisableVertexAttribArray(shader->a("aTexCoord"));
 }
-

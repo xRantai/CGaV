@@ -19,14 +19,6 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 
 #define GLM_FORCE_RADIANS
 
-/*
-	Pomoc naukowa do obiektów
-*/
-#define wall 0
-#define floor 1
-#define hole 2
-#define chest 3
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -84,6 +76,10 @@ void processInput(GLFWwindow* window, double dt) {
 	}
 }
 
+void initModels() {
+	models.push_back(Model(modelTemplates[1], glm::vec3(1.0f), float(3.1459 / 2), glm::vec3(1.0f)));
+}
+
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
 	initShaders();
@@ -102,21 +98,16 @@ void initOpenGLProgram(GLFWwindow* window) {
 	modelTemplates.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
 	modelTemplates.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
 	modelTemplates.push_back(Model("chest.obj", "chest.png"));
-
-	/*
-		Tu wygeneruj pierwotną scenę AKA jak wygląda labirynt i wrzućwszystko do pojemnika, ewentualnie zrób osobną funkcję
-	*/
-	models.push_back(Model(modelTemplates[0], glm::vec3(1.0f, 2.0f, 3.0f), 0.0f, glm::vec3(1.0f)));
 }
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
 	freeShaders();
 
-	delete &models; // usuwanie modeli 
+	//delete &models; // usuwanie modeli WIP
 }
 
-void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
+/*void draw(glm::mat4 P, glm::mat4 V, glm::mat4 M, Model model, GLuint texture) {
 
 	shader->use();
 
@@ -500,28 +491,28 @@ void drawsecondfloor(glm::mat4 P, glm::mat4 V) {
 	M = glm::scale(M, glm::vec3(0.05f, 0.05f, 0.05f));
 	M = glm::rotate(M, 3.14159f / 2, glm::vec3(0.0f, 1.0f, 0.0f));
 	draw(P, V, M, model[3], tex[2]);
-}
+}*/
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix();
-	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 
-	for (int i = 0; i < models.size(); i++) {
+
+	for (unsigned int i = 0; i < models.size(); i++) {
 		//models[i].update(); // zaktualizuj models (WIP)
 		models[i].render();
 	}
 
-	drawfirstfloor(perspective, view);
-	drawsecondfloor(perspective, view);
+	/*drawfirstfloor(perspective, view);
+	drawsecondfloor(perspective, view);*/
 
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
 }
 
-int main(void)
+int main()
 {
 	GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
@@ -550,11 +541,15 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
+	initModels();
+
+	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
+	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli
 
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-		double currentTime = glfwGetTime();
+		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
