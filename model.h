@@ -3,14 +3,8 @@
 
 #include <iostream>
 #include <vector>
-
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include <shaderprogram.h>
-
-#include "lodepng.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -18,17 +12,8 @@
 #include <rigidbody.h>
 #include <bounds.h>
 
-#include "camera.h"
-
-extern glm::mat4 perspective;
-extern glm::mat4 view;
-
 class Model{
 public:
-	glm::vec3 pos;
-	float rotation;
-	GLuint texture;
-
 	RigidBody rb;
 	BoundingRegion br;
 
@@ -36,14 +21,10 @@ public:
 	std::vector< glm::vec2 > texCoords;
 	std::vector< glm::vec4 > normals;
 	std::vector<unsigned int> indices;
+	const char* texture;
 
-	Model(std::string plik, const char* textureFile, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f); // tworzenie modelu z pliku
-	Model(Model model, glm::vec3 pos, float rotation); // tworzenie modelu z istniej¹cego modelu
-
-	GLuint readTexture(const char* textureFile);
-
-	void render();
-
+	Model();
+	Model(std::string plik, const char* texture);
 };
 
 #endif
