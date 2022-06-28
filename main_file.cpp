@@ -77,7 +77,29 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[1], glm::vec3(1.0f), float(PI / 2), glm::vec3(10.0f)));
+	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f))); //hole model
+
+	for (int i = 0; i < 7; i++) { //ceiling
+		for (int j = 0; j < 7; j++) {
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f*j), float(0), glm::vec3(2.3f)));
+		}
+	}
+	for (int i = 0; i < 7; i++) { //first floor floor
+		for (int j = 0; j < 7; j++) {
+			if (i == 3 && j == 4) { continue; }
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 0.0f, 6.5f - 2.3f * j), float(0), glm::vec3(2.3f)));
+		}
+	}
+
+	for (int i = 0; i < 7; i++) { //second floor floor
+		for (int j = 0; j < 7; j++) {
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, -1.8f, 6.5f - 2.3f * j), float(0), glm::vec3(2.3f)));
+		}
+	}
+
+	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
+
+
 }
 
 //Procedura inicjująca
