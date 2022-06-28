@@ -65,8 +65,8 @@ void Model::render() {
 	glEnableVertexAttribArray(shader->a("aTexCoord"));
 	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
-	glActiveTexture(GL_TEXTURE0 + texID);
-	glBindTexture(GL_TEXTURE_2D, textures[texID]);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
 	glUniform1i(shader->u("tex"), 0);
 	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
 

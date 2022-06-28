@@ -76,12 +76,6 @@ void processInput(GLFWwindow* window, double dt) {
 	if (Keyboard::key(GLFW_KEY_A)) {
 		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
-	if (Keyboard::key(GLFW_KEY_SPACE)) {
-		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
-	}
-	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
-		Camera::camera.updateCameraPos(CameraDirection::DOWN, dt);
-	}
 }
 
 void initModels() {
@@ -178,7 +172,7 @@ void initModels() {
 	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.321f, 0.375f, -2.675f), float(PI/2), glm::vec3(1.5f)));
 
 
-	//scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
+	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
 
 }
 
@@ -199,17 +193,20 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	textures.push_back(textureLoader.load("texture.png"));
 	modelTemplates.push_back(Model("wall.obj", textureLoader.getCurrentID()));
+	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("stoneFloor_Albedo.png"));
 
 	modelTemplates.push_back(Model("floor.obj", textureLoader.getCurrentID()));
+	printf("Vector size practise:%d\n", modelTemplates.size());
 	modelTemplates.push_back(Model("hole.obj", textureLoader.getCurrentID()));
+	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
 
 	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
-	printf("Vector size practise:%d\n", textures.size());
+	printf("Vector size practise:%d\n", modelTemplates.size());
 }
 
 //Zwolnienie zasobów zajętych przez program
