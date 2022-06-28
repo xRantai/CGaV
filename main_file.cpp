@@ -77,8 +77,8 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f))); //hole model
-
+	/*
+	
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
 			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f*j), float(0), glm::vec3(2.3f)));
@@ -97,8 +97,81 @@ void initModels() {
 		}
 	}
 
-	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
+	*/
+	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f))); //hole model
 
+	for (int i = 0; i < 4; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(8.25f - i*2.25f, 0.375f, 3.0f), float(0), glm::vec3(1.5f)));
+	}
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.075f, 0.375f, 4.125f), float(PI/2), glm::vec3(1.5f)));
+
+	for (int i = 0; i < 3; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(1.2f + i * 2.25f, 0.375f, 5.55f), float(PI), glm::vec3(1.5f)));
+	}
+	
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.3f, 0.375f, 2.145f), float(-PI / 2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.825f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.075f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 1.845f), float(PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 4.095f), float(PI / 2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 4.095f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 6.345f), float(PI / 2), glm::vec3(1.5f)));
+
+	for (int i = 0; i < 5; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-1.125f + 2.25f*i, 0.375f, 7.77f), float(PI), glm::vec3(1.5f)));
+	}
+
+	for (int i = 0; i < 7; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, 0.375f, 6.645f-2.25f*i), float(-PI / 2), glm::vec3(1.5f)));
+	}
+
+	for (int i = 0; i < 7; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f-2.25f*i, 0.375f, -8.28f), float(0), glm::vec3(1.5f)));
+	}
+
+	for (int i = 0; i < 7; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-6.75f, 0.375f, -7.155f + 2.25f * i), float(PI/2), glm::vec3(1.5f)));
+	}
+
+	for (int i = 0; i < 2; i++) {
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-5.625f + 2.25f * i, 0.375f, 7.77f), float(PI), glm::vec3(1.5f)));
+	}
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.925f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(4.725f, 0.375f, -0.135f), float(-PI/2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.575f, 0.375f, -1.335f), float(-PI), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(7.0f, 0.375f, -4.7f), float(-PI/2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.875f, 0.375f, -6.125f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(3.625f, 0.375f, -6.125f), float(0), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -5.0f), float(PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -2.75f), float(PI/2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(1.345f, 0.375f, -1.55f), float(0), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -2.405f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -4.655f), float(-PI / 2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.971f, 0.375f, -6.08f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.221f, 0.375f, -6.08f), float(0), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.646f, 0.375f, -4.955f), float(PI/2), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.521f, 0.375f, -3.53f), float(PI), glm::vec3(1.5f)));
+
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.321f, 0.375f, -2.675f), float(PI/2), glm::vec3(1.5f)));
+
+
+	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
 
 }
 
