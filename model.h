@@ -14,6 +14,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include <textureloader.h>
 
 #include <rigidbody.h>
 #include <bounds.h>
@@ -22,6 +23,7 @@
 
 extern glm::mat4 perspective;
 extern glm::mat4 view;
+extern std::vector<GLuint> textures;
 
 class Model {
 public:
@@ -29,7 +31,7 @@ public:
 	float rotation;
 	glm::vec3 scale;
 
-	GLuint texture;
+	unsigned int texID;
 
 	RigidBody rb; // fizyka
 	BoundingRegion br; // kolizje
@@ -39,11 +41,8 @@ public:
 	std::vector< glm::vec4 > normals;
 	std::vector<unsigned int> indices;
 
-	Model(std::string plik, const char* textureFile, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
+	Model(std::string plik, unsigned int texID, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
 	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale); // tworzenie modelu z istniej¹cego modelu
-	~Model();
-
-	GLuint readTexture(const char* textureFile);
 
 	void render();
 

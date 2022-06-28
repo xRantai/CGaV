@@ -29,6 +29,7 @@
     <ClInclude Include="mouse.h" />
     <ClInclude Include="rigidbody.h" />
     <ClInclude Include="shaderprogram.h" />
+    <ClInclude Include="textureloader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bounds.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
+    <ClCompile Include="textureloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="f_textured.glsl" />

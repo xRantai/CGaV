@@ -30,6 +30,7 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 #include "model_loader.h"
 
+#include <textureloader.h>
 #include "model.h"
 
 #include "keyboard.h"
@@ -40,6 +41,7 @@ Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+TextureLoader textureLoader;
 std::vector<Model> modelTemplates;
 std::vector<Model> scene; // wszystkie renderowane modele
 
@@ -77,7 +79,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[1], glm::vec3(1.0f), float(PI / 2), glm::vec3(10.0f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(1.0f), float(PI / 2), glm::vec3(10.0f)));
 }
 
 //Procedura inicjująca
@@ -94,17 +96,26 @@ void initOpenGLProgram(GLFWwindow* window) {
 	/*
 		Tworzenie szablonów modeli
 	*/
-	modelTemplates.push_back(Model("wall.obj", "texture.png"));
-	modelTemplates.push_back(Model("floor.obj", "stoneFloor_Albedo.png"));
-	modelTemplates.push_back(Model("hole.obj", "stoneFloor_Albedo.png"));
-	modelTemplates.push_back(Model("chest.obj", "chest.png"));
+
+	textures.push_back(textureLoader.load("texture.png"));
+	modelTemplates.push_back(Model("wall.obj", textureLoader.getCurrentID()));
+
+	textures.push_back(textureLoader.load("stoneFloor_Albedo.png"));
+
+	modelTemplates.push_back(Model("floor.obj", textureLoader.getCurrentID()));
+	modelTemplates.push_back(Model("hole.obj", textureLoader.getCurrentID()));
+
+	textures.push_back(textureLoader.load("chest.png"));
+	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
 }
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
 	freeShaders();
 
-	scene.clear(); // usuwanie modeli WIP
+	textureLoader.destroyTextures();
+	scene.clear(); // usuwanie modeli
+
 }
 
 //Procedura rysująca zawartość sceny

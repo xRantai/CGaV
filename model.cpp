@@ -2,9 +2,10 @@
 
 glm::mat4 perspective;
 glm::mat4 view;
+std::vector<GLuint> textures;
 
-Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: pos(pos), rotation(rotation), scale(scale) {
+Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation, glm::vec3 scale)
+	: pos(pos), rotation(rotation), scale(scale), texID(texID) {
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -39,36 +40,9 @@ Model::Model(std::string plik, const char* textureFile, glm::vec3 pos, float rot
 	this->indices = indices;
 	this->texCoords = texCoords;
 	this->normals = normals;
-	texture = readTexture(textureFile);
 }
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texture(model.texture), pos(pos), rotation(rotation), scale(scale) {} 
-Model::~Model() {
-	glDeleteTextures(1, &texture);
-}
-
-GLuint Model::readTexture(const char* textureFile) {
-	GLuint tex;
-	glActiveTexture(GL_TEXTURE0);
-
-	//Wczytanie do pamiêci komputera
-	std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
-	unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
-	//Wczytaj obrazek
-	unsigned error = lodepng::decode(image, width, height, textureFile);
-
-	//Import do pamiêci karty graficznej
-	glGenTextures(1, &tex); //Zainicjuj jeden uchwyt
-	glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
-	//Wczytaj obrazek do pamiêci KG skojarzonej z uchwytem
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)image.data());
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	return tex;
-}
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), pos(pos), rotation(rotation), scale(scale) {} 
 
 void Model::render() {
 	glm::mat4 transformation = glm::mat4(1.0f);
@@ -91,9 +65,10 @@ void Model::render() {
 	glEnableVertexAttribArray(shader->a("aTexCoord"));
 	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glActiveTexture(GL_TEXTURE0 + texID);
+	glBindTexture(GL_TEXTURE_2D, textures[texID]);
 	glUniform1i(shader->u("tex"), 0);
+	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
