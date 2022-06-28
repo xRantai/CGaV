@@ -41,11 +41,10 @@ public:
 	std::vector< glm::vec4 > normals;
 	std::vector<unsigned int> indices;
 
-	Model(std::string plik, unsigned int texID, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
-	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale); // tworzenie modelu z istniej¹cego modelu
+	Model(std::string plik, unsigned int texID, BoundTypes boundType = BoundTypes::AABB, glm::vec3 pos = glm::vec3(100000.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
+	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission = false); // tworzenie modelu z istniej¹cego modelu
 
 	void render(float dt);
-
 };
 
 #endif
