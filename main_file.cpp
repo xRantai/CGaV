@@ -37,7 +37,7 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 #include "mouse.h"
 #include "camera.h"
 
-Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
+Camera Camera::camera(glm::vec3(7.0f, 1.2f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
@@ -290,6 +290,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
 
+	textures.push_back(textureLoader.load("torch.png"));
+	modelTemplates.push_back(Model("torch.obj", textureLoader.getCurrentID()));
+
 	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
 	printf("Vector size practise:%d\n", modelTemplates.size());
 }
@@ -309,9 +312,17 @@ void drawScene(GLFWwindow* window) {
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
+	glm::vec3 torch_pos = Camera::camera.cameraPos;
+	glm::vec3 look_at = Camera::camera.cameraFront;
+	torch_pos += look_at * 1.0f;
+
+	scene.push_back(Model(modelTemplates[4], torch_pos, float(PI / 2), glm::vec3(0.5f)));
+
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render();
 	}
+
+	scene.pop_back();
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
 }
