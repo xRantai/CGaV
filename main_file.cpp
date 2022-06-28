@@ -312,17 +312,19 @@ void drawScene(GLFWwindow* window) {
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
-	glm::vec3 torch_pos = Camera::camera.cameraPos;
-	glm::vec3 look_at = Camera::camera.cameraFront;
-	torch_pos += look_at * 1.0f;
 
-	scene.push_back(Model(modelTemplates[4], torch_pos, float(PI / 2), glm::vec3(0.5f)));
+	Model torch = Model(modelTemplates[4], glm::vec3(0.3f,-0.5f,-1.0f), -float(Camera::camera.yaw*PI/180+PI/2), glm::vec3(0.5f));
+	glm::mat4 M = glm::mat4(1.0f);
+
+	M = glm::translate(M, Camera::camera.cameraPos);
+
+	torch.render2(M);
+
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render();
 	}
 
-	scene.pop_back();
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
 }

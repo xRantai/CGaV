@@ -76,3 +76,36 @@ void Model::render() {
 	glDisableVertexAttribArray(shader->a("aNormal"));
 	glDisableVertexAttribArray(shader->a("aTexCoord"));
 }
+
+void Model::render2(glm::mat4 transformation) {
+	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	transformation = glm::translate(transformation, pos);
+	transformation = glm::scale(transformation, scale);
+	
+
+	shader->use();
+
+	glUniformMatrix4fv(shader->u("P"), 1, false, glm::value_ptr(perspective)); //Za³aduj do programu cieniuj¹cego macierz rzutowania
+	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(view)); //Za³aduj do programu cieniuj¹cego macierz widoku
+	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(transformation)); //Za³aduj do programu cieniuj¹cego macierz modelu
+
+	glEnableVertexAttribArray(shader->a("aPos"));
+	glVertexAttribPointer(shader->a("aPos"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
+
+	glEnableVertexAttribArray(shader->a("aNormal"));
+	glVertexAttribPointer(shader->a("aNormal"), 4, GL_FLOAT, false, 0, normals.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+
+	glEnableVertexAttribArray(shader->a("aTexCoord"));
+	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
+	glUniform1i(shader->u("tex"), 0);
+	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
+
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+
+	glDisableVertexAttribArray(shader->a("aPos"));
+	glDisableVertexAttribArray(shader->a("aNormal"));
+	glDisableVertexAttribArray(shader->a("aTexCoord"));
+}

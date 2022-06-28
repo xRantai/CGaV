@@ -46,6 +46,8 @@ public:
 
 	void render();
 
+	void render2(glm::mat4 transformation);
+
 };
 
 #endif
