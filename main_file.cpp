@@ -76,16 +76,21 @@ void processInput(GLFWwindow* window, double dt) {
 	if (Keyboard::key(GLFW_KEY_A)) {
 		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
+	if (Keyboard::key(GLFW_KEY_SPACE)) {
+		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
+	}
+	if (Keyboard::key(GLFW_KEY_LEFT_SHIFT)) {
+		Camera::camera.updateCameraPos(CameraDirection::DOWN, dt);
+	}
 }
 
 void initModels() {
-	/*
-	
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
 			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f*j), float(0), glm::vec3(2.3f)));
 		}
 	}
+
 	for (int i = 0; i < 7; i++) { //first floor floor
 		for (int j = 0; j < 7; j++) {
 			if (i == 3 && j == 4) { continue; }
@@ -99,7 +104,7 @@ void initModels() {
 		}
 	}
 
-	*/
+	
 	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f))); //hole model
 
 	for (int i = 0; i < 4; i++) {
@@ -202,6 +207,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
+
+	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
+	printf("Vector size practise:%d\n", textures.size());
 }
 
 //Zwolnienie zasobów zajętych przez program

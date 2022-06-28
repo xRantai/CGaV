@@ -11,7 +11,6 @@ class TextureLoader {
 public:
 	TextureLoader();
 
-
 	GLuint load(const char* textureFile);
 
 	unsigned int getCurrentID();
