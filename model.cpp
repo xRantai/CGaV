@@ -5,7 +5,7 @@ glm::mat4 view;
 std::vector<GLuint> textures;
 
 Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: pos(pos), rotation(rotation), scale(scale), texID(texID) {
+	: rotation(rotation), scale(scale), texID(texID) {
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -40,13 +40,18 @@ Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation
 	this->indices = indices;
 	this->texCoords = texCoords;
 	this->normals = normals;
+	rb.pos = pos;
 }
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), pos(pos), rotation(rotation), scale(scale) {} 
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), rotation(rotation), scale(scale) {
+	rb.pos = pos;
+} 
 
-void Model::render() {
+void Model::render(float dt) {
+	rb.update(dt);
+
 	glm::mat4 transformation = glm::mat4(1.0f);
-	transformation = glm::translate(transformation, pos);
+	transformation = glm::translate(transformation, rb.pos);
 	transformation = glm::scale(transformation, scale);
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 

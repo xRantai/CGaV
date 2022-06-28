@@ -22,11 +22,13 @@
     <ClInclude Include="bounds.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="environment.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="lodepng.h" />
     <ClInclude Include="model_loader.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="rigidbody.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="textureloader.h" />
@@ -34,11 +36,13 @@
   <ItemGroup>
     <ClCompile Include="bounds.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="environment.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="textureloader.cpp" />

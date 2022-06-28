@@ -193,20 +193,13 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	textures.push_back(textureLoader.load("texture.png"));
 	modelTemplates.push_back(Model("wall.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("stoneFloor_Albedo.png"));
-
 	modelTemplates.push_back(Model("floor.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 	modelTemplates.push_back(Model("hole.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
-
-	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
-	printf("Vector size practise:%d\n", modelTemplates.size());
 }
 
 //Zwolnienie zasobów zajętych przez program
@@ -219,13 +212,13 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
+void drawScene(GLFWwindow* window, float dt) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render();
+		object.render(dt);
 	}
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
@@ -276,7 +269,7 @@ int main()
 
 		processInput(window, deltaTime);
 
-		drawScene(window); //Wykonaj procedurę rysującą
+		drawScene(window, deltaTime); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 

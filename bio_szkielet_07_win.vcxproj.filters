@@ -19,6 +19,9 @@
     <Filter Include="physics">
       <UniqueIdentifier>{64480fda-adec-47e5-bca9-dc67594abafc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{7d5bdd27-e4e4-4cef-878d-ed780a3b0c96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constants.h">
@@ -48,11 +51,17 @@
     <ClInclude Include="rigidbody.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="player.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="environment.h">
       <Filter>physics</Filter>
     </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
     <ClInclude Include="textureloader.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,11 +89,17 @@
     <ClCompile Include="rigidbody.cpp">
       <Filter>physics</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="player.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="environment.cpp">
       <Filter>physics</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="textureloader.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
