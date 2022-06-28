@@ -103,7 +103,7 @@ void Model::render(float dt) {
 	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
+	glBindTexture(GL_TEXTURE_2D, textures[texID]);
 	glUniform1i(shader->u("tex"), 0);
 	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
 

@@ -27,12 +27,6 @@
     <ClInclude Include="constants.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="lodepng.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="shaderprogram.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="model_loader.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
@@ -63,15 +57,15 @@
     <ClInclude Include="textureloader.h">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="shaderprogram.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lodepng.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="main_file.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="shaderprogram.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
@@ -99,6 +93,12 @@
       <Filter>graphics</Filter>
     </ClCompile>
     <ClCompile Include="textureloader.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderprogram.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
