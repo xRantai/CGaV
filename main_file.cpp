@@ -173,7 +173,7 @@ void initModels() {
 	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.321f, 0.375f, -2.675f), float(PI/2), glm::vec3(1.5f)));
 
 
-	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
+	//scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
 
 }
 
@@ -219,8 +219,8 @@ void drawScene(GLFWwindow* window) {
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
-	for (unsigned int i = 0; i < scene.size(); i++) { // narysuj wszystkie modele
-		scene[i].render();
+	for (Model &object : scene) { // narysuj wszystkie modele
+		object.render();
 	}
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
