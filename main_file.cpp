@@ -328,7 +328,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	glm::mat4 M = glm::mat4(1.0f);
 
 	M = glm::translate(M, Camera::camera.cameraPos);
-	printf("Camera position: %f, %f, %f\n", Camera::camera.cameraPos.x, Camera::camera.cameraPos.y, Camera::camera.cameraPos.z);
 
 	torch.render2(Camera::camera.cameraPos, M, dt);
 	updateSkull();
@@ -352,10 +351,10 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	//window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-		//glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
+	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+		glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
 	//Utwórz okno na głównym monitorze
-	window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
+	//window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{

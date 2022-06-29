@@ -20,8 +20,6 @@
 #include <environment.h>
 #include <bounds.h>
 
-#include "camera.h"
-
 extern glm::mat4 perspective;
 extern glm::mat4 view;
 extern std::vector<GLuint> textures;
