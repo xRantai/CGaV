@@ -44,68 +44,93 @@ Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), pos(pos), rotation(rotation), scale(scale) {} 
 
-void Model::render() {
+void Model::render(glm::vec3 cameraPos) {
 	glm::mat4 transformation = glm::mat4(1.0f);
 	transformation = glm::translate(transformation, pos);
 	transformation = glm::scale(transformation, scale);
+
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+	float cameraPosition[]{0,0,0,1};
+	cameraPosition[0] = cameraPos.x;
+	cameraPosition[1] = cameraPos.y;
+	cameraPosition[2] = cameraPos.z;
+
 
 	shader->use();
 
 	glUniformMatrix4fv(shader->u("P"), 1, false, glm::value_ptr(perspective)); //Za³aduj do programu cieniuj¹cego macierz rzutowania
 	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(view)); //Za³aduj do programu cieniuj¹cego macierz widoku
 	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(transformation)); //Za³aduj do programu cieniuj¹cego macierz modelu
+	glUniform4fv(shader->u("cameraPos"), 1, cameraPosition);
 
-	glEnableVertexAttribArray(shader->a("aPos"));
-	glVertexAttribPointer(shader->a("aPos"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
+	glEnableVertexAttribArray(shader->a("vertex"));
+	glVertexAttribPointer(shader->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
 
-	glEnableVertexAttribArray(shader->a("aNormal"));
-	glVertexAttribPointer(shader->a("aNormal"), 4, GL_FLOAT, false, 0, normals.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("normal"));
+	glVertexAttribPointer(shader->a("normal"), 4, GL_FLOAT, false, 0, normals.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
-	glEnableVertexAttribArray(shader->a("aTexCoord"));
-	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("texCoord0"));
+	glVertexAttribPointer(shader->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
+
+
+
+	glUniform1i(shader->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
-	glUniform1i(shader->u("tex"), 0);
-	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
+
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
-	glDisableVertexAttribArray(shader->a("aPos"));
-	glDisableVertexAttribArray(shader->a("aNormal"));
-	glDisableVertexAttribArray(shader->a("aTexCoord"));
+	glDisableVertexAttribArray(shader->a("vertex"));
+	glDisableVertexAttribArray(shader->a("normal"));
+	glDisableVertexAttribArray(shader->a("texCoords0"));
+	glDisableVertexAttribArray(shader->a("camearaPos"));
 }
 
-void Model::render2(glm::mat4 transformation) {
+void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation) {
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	transformation = glm::translate(transformation, pos);
 	transformation = glm::scale(transformation, scale);
 	
 
+	float cameraPosition[]{ 0,0,0,1 };
+	cameraPosition[0] = cameraPos.x;
+	cameraPosition[1] = cameraPos.y;
+	cameraPosition[2] = cameraPos.z;
+
+
 	shader->use();
 
 	glUniformMatrix4fv(shader->u("P"), 1, false, glm::value_ptr(perspective)); //Za³aduj do programu cieniuj¹cego macierz rzutowania
 	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(view)); //Za³aduj do programu cieniuj¹cego macierz widoku
 	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(transformation)); //Za³aduj do programu cieniuj¹cego macierz modelu
 
-	glEnableVertexAttribArray(shader->a("aPos"));
-	glVertexAttribPointer(shader->a("aPos"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
+	glEnableVertexAttribArray(shader->a("vertex"));
+	glVertexAttribPointer(shader->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
 
-	glEnableVertexAttribArray(shader->a("aNormal"));
-	glVertexAttribPointer(shader->a("aNormal"), 4, GL_FLOAT, false, 0, normals.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("normal"));
+	glVertexAttribPointer(shader->a("normal"), 4, GL_FLOAT, false, 0, normals.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
-	glEnableVertexAttribArray(shader->a("aTexCoord"));
-	glVertexAttribPointer(shader->a("aTexCoord"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+	glEnableVertexAttribArray(shader->a("texCoord0"));
+	glVertexAttribPointer(shader->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
 
+
+	glEnableVertexAttribArray(shader->a("cameraPos"));
+	glVertexAttribPointer(shader->a("cameraPos"), 3, GL_FLOAT, false, 0, cameraPosition);
+
+
+	glUniform1i(shader->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
-	glUniform1i(shader->u("tex"), 0);
-	glActiveTexture(GL_TEXTURE0); // resetowanie po wys³aniu danych
+
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
-	glDisableVertexAttribArray(shader->a("aPos"));
-	glDisableVertexAttribArray(shader->a("aNormal"));
-	glDisableVertexAttribArray(shader->a("aTexCoord"));
+	glDisableVertexAttribArray(shader->a("vertex"));
+	glDisableVertexAttribArray(shader->a("normal"));
+	glDisableVertexAttribArray(shader->a("texCoords0"));
+	glDisableVertexAttribArray(shader->a("camearaPos"));
 }

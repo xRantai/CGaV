@@ -293,6 +293,11 @@ void initOpenGLProgram(GLFWwindow* window) {
 	textures.push_back(textureLoader.load("torch.png"));
 	modelTemplates.push_back(Model("torch.obj", textureLoader.getCurrentID()));
 
+	textures.push_back(textureLoader.load("wall_spec.png"));
+	textures.push_back(textureLoader.load("floor_spec.png"));
+	textures.push_back(textureLoader.load("chest_spec.png"));
+	textures.push_back(textureLoader.load("torch.png"));
+
 	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
 	printf("Vector size practise:%d\n", modelTemplates.size());
 }
@@ -317,12 +322,13 @@ void drawScene(GLFWwindow* window) {
 	glm::mat4 M = glm::mat4(1.0f);
 
 	M = glm::translate(M, Camera::camera.cameraPos);
+	printf("Camera position: %f, %f, %f\n", Camera::camera.cameraPos.x, Camera::camera.cameraPos.y, Camera::camera.cameraPos.z);
 
-	torch.render2(M);
+	torch.render2(Camera::camera.cameraPos, M);
 
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render();
+		object.render(Camera::camera.cameraPos);
 	}
 
 
@@ -339,6 +345,8 @@ int main()
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
+
+
 
 	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
 		glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
