@@ -79,7 +79,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[4], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f))); // skull
+	scene.push_back(Model(modelTemplates[5], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f))); // skull
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
@@ -330,7 +330,7 @@ void drawScene(GLFWwindow* window, float dt) {
 	M = glm::translate(M, Camera::camera.cameraPos);
 	printf("Camera position: %f, %f, %f\n", Camera::camera.cameraPos.x, Camera::camera.cameraPos.y, Camera::camera.cameraPos.z);
 
-	torch.render2(Camera::camera.cameraPos, M);
+	torch.render2(Camera::camera.cameraPos, M, dt);
 
 
 	for (Model &object : scene) { // narysuj wszystkie modele
@@ -352,9 +352,10 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-		glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
+	//window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+		//glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
 	//Utwórz okno na głównym monitorze
+	window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{

@@ -79,10 +79,9 @@ Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool h
 	rb.pos = pos;
 } 
 
-void Model::render(float dt) {
+void Model::render(glm::vec3 cameraPos, float dt) {
 	rb.update(dt);
 
-void Model::render(glm::vec3 cameraPos, float dt) {
 	glm::mat4 transformation = glm::mat4(1.0f);
 	transformation = glm::translate(transformation, rb.pos);
 	transformation = glm::scale(transformation, scale);
@@ -117,7 +116,7 @@ void Model::render(glm::vec3 cameraPos, float dt) {
 
 	glUniform1i(shader->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
+	glBindTexture(GL_TEXTURE_2D, textures[texID]);
 
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
@@ -128,9 +127,11 @@ void Model::render(glm::vec3 cameraPos, float dt) {
 	glDisableVertexAttribArray(shader->a("camearaPos"));
 }
 
-void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation) {
+void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation, float dt) {
+	rb.update(dt);
+
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-	transformation = glm::translate(transformation, pos);
+	transformation = glm::translate(transformation, rb.pos);
 	transformation = glm::scale(transformation, scale);
 	
 
