@@ -330,11 +330,11 @@ void drawScene(GLFWwindow* window, float dt) {
 	M = glm::translate(M, Camera::camera.cameraPos);
 	printf("Camera position: %f, %f, %f\n", Camera::camera.cameraPos.x, Camera::camera.cameraPos.y, Camera::camera.cameraPos.z);
 
-	torch.render2(Camera::camera.cameraPos, scene[0].rb.pos, M, dt);
+	torch.render2(Camera::camera.cameraPos, M, dt);
 	updateSkull();
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.cameraPos, scene[0].rb.pos, dt);
+		object.render(Camera::camera.cameraPos, dt);
 	}
 
 
