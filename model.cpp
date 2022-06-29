@@ -79,7 +79,7 @@ Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool h
 	rb.pos = pos;
 } 
 
-void Model::render(glm::vec3 cameraPos, float dt) {
+void Model::render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt) {
 	rb.update(dt);
 
 	glm::mat4 transformation = glm::mat4(1.0f);
@@ -94,6 +94,10 @@ void Model::render(glm::vec3 cameraPos, float dt) {
 	cameraPosition[1] = cameraPos.y;
 	cameraPosition[2] = cameraPos.z;
 
+	float skullPosition[]{ 0,0,0,1 };
+	skullPosition[0] = skullPos.x;
+	skullPosition[1] = skullPos.y;
+	skullPosition[2] = skullPos.z;
 
 	shader->use();
 
@@ -101,6 +105,7 @@ void Model::render(glm::vec3 cameraPos, float dt) {
 	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(view)); //Za³aduj do programu cieniuj¹cego macierz widoku
 	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(transformation)); //Za³aduj do programu cieniuj¹cego macierz modelu
 	glUniform4fv(shader->u("cameraPos"), 1, cameraPosition);
+	glUniform4fv(shader->u("skullPos"), 1, skullPosition);
 
 	glEnableVertexAttribArray(shader->a("vertex"));
 	glVertexAttribPointer(shader->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
@@ -127,7 +132,7 @@ void Model::render(glm::vec3 cameraPos, float dt) {
 	glDisableVertexAttribArray(shader->a("camearaPos"));
 }
 
-void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation, float dt) {
+void Model::render2(glm::vec3 cameraPos, glm::vec3 skullPos, glm::mat4 transformation, float dt) {
 	rb.update(dt);
 
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -140,12 +145,19 @@ void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation, float dt) {
 	cameraPosition[1] = cameraPos.y;
 	cameraPosition[2] = cameraPos.z;
 
+	float skullPosition[]{ 0,0,0,1};
+	skullPosition[0] = skullPos.x;
+	skullPosition[1] = skullPos.y;
+	skullPosition[2] = skullPos.z;
+
 
 	shader->use();
 
 	glUniformMatrix4fv(shader->u("P"), 1, false, glm::value_ptr(perspective)); //Za³aduj do programu cieniuj¹cego macierz rzutowania
 	glUniformMatrix4fv(shader->u("V"), 1, false, glm::value_ptr(view)); //Za³aduj do programu cieniuj¹cego macierz widoku
 	glUniformMatrix4fv(shader->u("M"), 1, false, glm::value_ptr(transformation)); //Za³aduj do programu cieniuj¹cego macierz modelu
+	glUniform4fv(shader->u("cameraPos"), 1, cameraPosition);
+	glUniform4fv(shader->u("skullPos"), 1, skullPosition);
 
 	glEnableVertexAttribArray(shader->a("vertex"));
 	glVertexAttribPointer(shader->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices

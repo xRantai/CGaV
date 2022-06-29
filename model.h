@@ -42,11 +42,10 @@ public:
 	Model(std::string plik, unsigned int texID, BoundTypes boundType = BoundTypes::AABB, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
 	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission = false); // tworzenie modelu z istniej¹cego modelu
 
-	void render(glm::vec3 cameraPos, float dt);
+	void render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt);
 
-	void render2(glm::vec3 cameraPos, glm::mat4 transformation, float dt);
+	void render2(glm::vec3 cameraPos, glm::vec3 skullPos, glm::mat4 transformation, float dt);
 
-	void render(float dt);
 };
 
 #endif
