@@ -1,5 +1,5 @@
 #ifndef RIGIDBODY_H
-#define RIGIBDOY_H
+#define RIGIDBODY_H
 
 #include <glm/glm.hpp>
 

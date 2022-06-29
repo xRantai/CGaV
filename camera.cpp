@@ -28,11 +28,10 @@ void Camera::updateCameraDirection(double dx, double dy) {
 }
 
 void Camera::updateCameraPos(CameraDirection direction, double dt) {
-	float velocity = (float)dt * speed;
 	glm::vec3 front, right;
 
 	/*
-		Calculating the vectors irrelevant to pitch
+		Calculating the vectors parallel to XZ plane
 	*/
 
 	front.x = cos(glm::radians(yaw));

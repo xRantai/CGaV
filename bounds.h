@@ -1,5 +1,5 @@
 #ifndef BOUNDS_H
-#define BOUND_H
+#define BOUNDS_H
 
 #include <glm/glm.hpp>
 #include <stdlib.h>
