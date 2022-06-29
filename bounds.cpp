@@ -16,17 +16,7 @@ glm::vec3 BoundingRegion::calculateDimensions(){
 }
 
 bool BoundingRegion::containsPoint(glm::vec3 pt){
-	if (type == BoundTypes::AABB) {
-		return (pt.x >= min.x) && (pt.x <= max.x) && (pt.y >= min.y) && (pt.y <= max.y) && (pt.z >= min.z) && (pt.z <= min.z);
-	}
-	else {
-		float distSquared = 0.0f;
-		for (int i = 0; i < 3; i++) {
-			distSquared += (center[i] - pt[i]) * (center[i] - pt[i]);
-		}
-
-		return distSquared <= (radius * radius);
-	}
+	return (pt.x >= min.x) && (pt.x <= max.x) && (pt.y >= min.y) && (pt.y <= max.y) && (pt.z >= min.z) && (pt.z <= min.z);
 }
 bool BoundingRegion::intersectsWith(BoundingRegion br){
 	if (type == BoundTypes::AABB and br.type == BoundTypes::AABB) {

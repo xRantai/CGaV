@@ -40,6 +40,7 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 Camera Camera::camera(glm::vec3(7.0f, 1.2f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+Model torch; 
 
 TextureLoader textureLoader;
 std::vector<Model> modelTemplates;
@@ -263,6 +264,7 @@ void initModels() {
 
 	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.85f), float(PI / 2), glm::vec3(0.05f))); //chest model
 
+	torch = Model(modelTemplates[4], glm::vec3(0.3f, -0.5f, -1.0f), -float(Camera::camera.yaw * PI / 180 + PI / 2), glm::vec3(0.5f), false);
 }
 
 //Procedura inicjująca
@@ -325,9 +327,9 @@ void drawScene(GLFWwindow* window, float dt) {
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
-	Model torch = Model(modelTemplates[4], glm::vec3(0.3f,-0.5f,-1.0f), -float(Camera::camera.yaw*PI/180+PI/2), glm::vec3(0.5f), false);
+	
 	glm::mat4 M = glm::mat4(1.0f);
-
+	torch.rotation = -float(Camera::camera.yaw * PI / 180 + PI / 2);
 	M = glm::translate(M, Camera::camera.rb.pos);
 
 	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, dt, M);

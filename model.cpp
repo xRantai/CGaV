@@ -4,6 +4,7 @@ glm::mat4 perspective;
 glm::mat4 view;
 std::vector<GLuint> textures;
 
+Model::Model() {}
 Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: rotation(rotation), scale(scale), texID(texID) {
 	br.type = boundType;
