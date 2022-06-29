@@ -76,6 +76,9 @@ void processInput(GLFWwindow* window, double dt) {
 	if (Keyboard::key(GLFW_KEY_A)) {
 		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
+	if (Keyboard::key(GLFW_KEY_SPACE)) {
+		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
+	}
 }
 
 void initModels() {
@@ -295,9 +298,6 @@ void initOpenGLProgram(GLFWwindow* window) {
 	textures.push_back(textureLoader.load("chest_spec.png"));
 	textures.push_back(textureLoader.load("torch.png"));
 
-	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
-	printf("Vector size practise:%d\n", modelTemplates.size());
-
 	textures.push_back(textureLoader.load("skull.png"));
 	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID(), BoundTypes::SPHERE));
 }
@@ -312,7 +312,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 void updateSkull() {
-	glm::vec3 direction = scene[0].rb.pos - Camera::camera.cameraPos;
+	glm::vec3 direction = scene[0].rb.pos - Camera::camera.rb.pos;
 	scene[0].rb.setVelocity(direction, -1.0f); // skull follows you
 	scene[0].rotation = glm::atan(direction.x, direction.z); // looks your direction
 }
@@ -327,15 +327,16 @@ void drawScene(GLFWwindow* window, float dt) {
 	Model torch = Model(modelTemplates[4], glm::vec3(0.3f,-0.5f,-1.0f), -float(Camera::camera.yaw*PI/180+PI/2), glm::vec3(0.5f));
 	glm::mat4 M = glm::mat4(1.0f);
 
-	M = glm::translate(M, Camera::camera.cameraPos);
+	M = glm::translate(M, Camera::camera.rb.pos);
 
-	torch.render2(Camera::camera.cameraPos, scene[0].rb.pos, M, dt);
+	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, M, dt);
 	updateSkull();
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.cameraPos, scene[0].rb.pos, dt);
+		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
 	}
 
+	Camera::camera.rb.update(dt);
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
 }
@@ -351,10 +352,9 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-		glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
-	//Utwórz okno na głównym monitorze
-	//window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
+	//window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
+	//Okno na pokaz ^ Okno debug v
+	window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{

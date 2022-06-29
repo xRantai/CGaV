@@ -1,5 +1,4 @@
 #include "mouse.h"
-#include "camera.h"
 
 double Mouse::x = 0;
 double Mouse::y = 0;

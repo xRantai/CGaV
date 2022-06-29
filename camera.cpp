@@ -1,20 +1,21 @@
 #include "camera.h"
 
 Camera::Camera(glm::vec3 position)
-	: cameraPos(position),
-	worldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
+	: worldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
 	yaw(-90.0f),
 	pitch(0.0f),
 	speed(2.5f),
 	cameraFront(glm::vec3(0.0f, 0.0f, -1.0f))
 {
+	rb.pos = position;
+	//rb.acceleration = Environment::gravitationalAcceleration;
 	updateCameraVectors();
 }
 
 // mouse movement
 void Camera::updateCameraDirection(double dx, double dy) {
-	yaw += dx/2;
-	pitch += dy/2;
+	yaw += dx / 2;
+	pitch += dy / 2;
 
 	if (pitch > 89.0f) {
 		pitch = 89.0f;
@@ -43,22 +44,32 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 
 	switch (direction) {
 	case CameraDirection::FORWARD:
-		cameraPos += front * velocity;
+		rb.velocity += front * speed;
 		break;
 	case CameraDirection::BACKWARD:
-		cameraPos -= front * velocity;
+		rb.velocity -= front * speed;
 		break;
 	case CameraDirection::RIGHT:
-		cameraPos += right * velocity;
+		rb.velocity += right * speed;
 		break;
 	case CameraDirection::LEFT:
-		cameraPos -= right * velocity;
+		rb.velocity -= right * speed;
+		break;
+	case CameraDirection::UP:
+		rb.velocity += worldUp * 10.0f;
 		break;
 	}
+	
+	rb.update(dt);
+	rb.velocity = glm::vec3(0, rb.velocity.y, 0);
 }
 
 glm::mat4 Camera::getViewMatrix() {
-	return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	return glm::lookAt(rb.pos, rb.pos + cameraFront, cameraUp);
+}
+
+void Camera::setScene(std::vector<Model>& vec) {
+	scene = vec;
 }
 
 void Camera::updateCameraVectors() {

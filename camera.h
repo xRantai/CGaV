@@ -1,9 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <model.h>
 
 enum class CameraDirection {
 	NONE = 0,
@@ -19,7 +17,7 @@ class Camera {
 public:
 	static Camera camera;
 
-	glm::vec3 cameraPos;
+	RigidBody rb;
 
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
@@ -38,8 +36,11 @@ public:
 
 	glm::mat4 getViewMatrix();
 
+	void setScene(std::vector<Model>& vec);
+
 private:
 	void updateCameraVectors();
+	std::vector<Model> scene;
 };
 
 #endif
