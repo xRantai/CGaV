@@ -8,8 +8,8 @@ Model::Model() {}
 Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: rotation(rotation), scale(scale), texID(texID) {
 	br.type = boundType;
-	glm::vec3 min((float)(~0));			// initial set to largest integer
-	glm::vec3 max(-(float)(~0));		// initial set to smallest integer
+	bool first = true;
+	glm::vec3 min, max;
 
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
@@ -29,14 +29,27 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		/*
 			Calculations for Bounding Region depending on rotation angle
 		*/
-
 		if (rotation == 0.0f) {
+			if (first) {
+				min.x = vertex.x;
+				min.y = vertex.y;
+				min.z = vertex.z;
+				max = min;
+			}
+
 			for (int j = 0; j < 3; j++) {
 				if (vertex[j] < min[j]) min[j] = vertex[j];
 				if (vertex[j] > max[j]) max[j] = vertex[j];
 			}
 		}
 		if (rotation == float(PI / 2)) {
+			if (first) {
+				min.x = -vertex.z;
+				min.y = vertex.y;
+				min.z = vertex.x;
+				max = min;
+			}
+
 			if (-vertex.z < min.x)
 				min.x = -vertex.z;
 			if (-vertex.z > max.x)
@@ -51,6 +64,13 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 				max.z = vertex.x;
 		}
 		if (rotation == float(PI) || rotation == float(-PI)) {
+			if (first) {
+				min.x = -vertex.z;
+				min.y = vertex.y;
+				min.z = -vertex.x;
+				max = min;
+			}
+
 			if (-vertex.z < min.x)
 				min.x = -vertex.z;
 			if (-vertex.z > max.x)
@@ -65,6 +85,13 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 				max.z = -vertex.x;
 		}
 		if (rotation == float( - PI / 2)) {
+			if (first) {
+				min.x = vertex.x;
+				min.y = vertex.y;
+				min.z = -vertex.x;
+				max = min;
+			}
+
 			if (vertex.z < min.x)
 				min.x = vertex.z;
 			if (vertex.z > max.x)
@@ -133,6 +160,7 @@ Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool h
 	else {
 		br.max = model.br.max + pos;
 		br.min = model.br.min + pos;
+		printf("%f %f %f\n\n", br.max.x, br.max.y, br.max.z);
 	}
 } 
 
