@@ -4,8 +4,12 @@ glm::mat4 perspective;
 glm::mat4 view;
 std::vector<GLuint> textures;
 
-Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: pos(pos), rotation(rotation), scale(scale), texID(texID) {
+Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::vec3 pos, float rotation, glm::vec3 scale)
+	: rotation(rotation), scale(scale), texID(texID) {
+	br.type = boundType;
+	glm::vec3 min((float)(~0));			// initial set to largest integer
+	glm::vec3 max(-(float)(~0));		// initial set to smallest integer
+
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
 	std::vector< glm::vec2 > texCoords;
@@ -20,6 +24,11 @@ Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 		aiVector3D vertex = mesh->mVertices[i];
 		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
+
+		for (int j = 0; j < 3; j++) {//calculations for Bounding Region
+			if (vertex[j] < min[j]) min[j] = vertex[j];
+			if (vertex[j] > max[j]) max[j] = vertex[j];
+		}
 
 		aiVector3D normal = mesh->mNormals[i];
 		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
@@ -36,17 +45,46 @@ Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation
 		}
 	}
 
+	/*
+		Process data for Bounding Region
+	*/
+
+	if (boundType == BoundTypes::AABB) {
+		br.max = max;
+		br.min = min;
+	}
+	else {
+		br.center = BoundingRegion(min, max).calculateCenter();
+		float MaxRadiusSquared = 0.0f;
+		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+			float RadiusSquared = 0.0f;
+			for (int j = 0; j < 3; j++) {
+				RadiusSquared += (vertices[i][j] - br.center[j]) * (vertices[i][j] - br.center[j]);
+			}
+			if (RadiusSquared > MaxRadiusSquared) {
+				MaxRadiusSquared = RadiusSquared;
+			}
+		}
+		br.radius = sqrt(MaxRadiusSquared);
+	}
+
 	this->vertices = vertices;
 	this->indices = indices;
 	this->texCoords = texCoords;
 	this->normals = normals;
+	rb.pos = pos;
 }
-Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), pos(pos), rotation(rotation), scale(scale) {} 
+Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission)
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), rotation(rotation), scale(scale) {
+	rb.pos = pos;
+} 
 
-void Model::render(glm::vec3 cameraPos) {
+void Model::render(float dt) {
+	rb.update(dt);
+
+void Model::render(glm::vec3 cameraPos, float dt) {
 	glm::mat4 transformation = glm::mat4(1.0f);
-	transformation = glm::translate(transformation, pos);
+	transformation = glm::translate(transformation, rb.pos);
 	transformation = glm::scale(transformation, scale);
 
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -124,8 +162,7 @@ void Model::render2(glm::vec3 cameraPos, glm::mat4 transformation) {
 
 	glUniform1i(shader->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[texID - 1]);
-
+	glBindTexture(GL_TEXTURE_2D, textures[texID]);
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 

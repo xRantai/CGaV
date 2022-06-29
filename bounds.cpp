@@ -51,17 +51,19 @@ bool BoundingRegion::intersectsWith(BoundingRegion br){
 	}
 	else if (type == BoundTypes::SPHERE) {
 		float distSquared = 0.0f;
-
 		for (int i = 0; i < 3; i++) {
 			if (center[i] < br.min[i]) {
+				// beyond min
 				distSquared += (br.min[i] - center[i]) * (br.min[i] - center[i]);
 			}
 			else if (center[i] > br.max[i]) {
+				// beyond max
 				distSquared += (center[i] - br.max[i]) * (center[i] - br.max[i]);
 			}
+			// else inside
 		}
 
-		return distSquared < (radius * radius);
+		return distSquared < (radius* radius);
 	}
 	else {
 		return br.intersectsWith(*this);

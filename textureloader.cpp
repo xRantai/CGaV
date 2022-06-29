@@ -31,7 +31,7 @@ GLuint TextureLoader::load(const char* textureFile) {
 }
 
 unsigned int TextureLoader::getCurrentID() {
-	return id;
+	return id - 1;
 }
 
 void TextureLoader::destroyTextures() {

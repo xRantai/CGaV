@@ -79,6 +79,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
+	scene.push_back(Model(modelTemplates[4], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f))); // skull
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
@@ -278,14 +279,10 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	textures.push_back(textureLoader.load("texture.png"));
 	modelTemplates.push_back(Model("wall.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("stoneFloor_Albedo.png"));
-
 	modelTemplates.push_back(Model("floor.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 	modelTemplates.push_back(Model("hole.obj", textureLoader.getCurrentID()));
-	printf("Vector size practise:%d\n", modelTemplates.size());
 
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
@@ -300,6 +297,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	printf("Vector size theory:%d\n", textureLoader.getCurrentID());
 	printf("Vector size practise:%d\n", modelTemplates.size());
+
+	textures.push_back(textureLoader.load("skull.png"));
+	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID(), BoundTypes::SPHERE));
 }
 
 //Zwolnienie zasobów zajętych przez program
@@ -311,8 +311,14 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 }
 
+void updateSkull() {
+	glm::vec3 direction = scene[0].rb.pos - Camera::camera.cameraPos;
+	scene[0].rb.setVelocity(direction, -1.0f); // skull follows you
+	scene[0].rotation = glm::atan(direction.x, direction.z); // looks your direction
+}
+
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
+void drawScene(GLFWwindow* window, float dt) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
@@ -328,7 +334,7 @@ void drawScene(GLFWwindow* window) {
 
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.cameraPos);
+		object.render(Camera::camera.cameraPos, dt);
 	}
 
 
@@ -345,8 +351,6 @@ int main()
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
-
-
 
 	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
 		glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
@@ -382,7 +386,7 @@ int main()
 
 		processInput(window, deltaTime);
 
-		drawScene(window); //Wykonaj procedurę rysującą
+		drawScene(window, deltaTime); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 

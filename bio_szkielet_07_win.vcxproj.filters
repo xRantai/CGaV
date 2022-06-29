@@ -19,15 +19,12 @@
     <Filter Include="physics">
       <UniqueIdentifier>{64480fda-adec-47e5-bca9-dc67594abafc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{7d5bdd27-e4e4-4cef-878d-ed780a3b0c96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constants.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="lodepng.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="shaderprogram.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="model_loader.h">
@@ -48,21 +45,24 @@
     <ClInclude Include="rigidbody.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="environment.h">
       <Filter>physics</Filter>
     </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
     <ClInclude Include="textureloader.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderprogram.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lodepng.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="main_file.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="shaderprogram.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
@@ -80,11 +80,20 @@
     <ClCompile Include="rigidbody.cpp">
       <Filter>physics</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="environment.cpp">
       <Filter>physics</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="textureloader.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderprogram.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

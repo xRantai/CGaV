@@ -2,6 +2,8 @@
 #define BOUND_H
 
 #include <glm/glm.hpp>
+#include <stdlib.h>
+#include <stdio.h>
 
 enum class BoundTypes {
 	AABB = 0x00,

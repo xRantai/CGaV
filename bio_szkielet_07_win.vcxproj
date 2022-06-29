@@ -22,6 +22,7 @@
     <ClInclude Include="bounds.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="environment.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="lodepng.h" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <ClCompile Include="bounds.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="environment.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="lodepng.cpp" />
