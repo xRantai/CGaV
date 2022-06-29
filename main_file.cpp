@@ -41,6 +41,7 @@ Camera Camera::camera(glm::vec3(7.0f, 1.2f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Model torch; 
+Model skull;
 
 TextureLoader textureLoader;
 std::vector<Model> modelTemplates;
@@ -83,7 +84,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[5], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f), false)); // skull
+	skull = Model(modelTemplates[5], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.3f), false); // skull
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
@@ -313,12 +314,12 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 }
 
-void updateSkull() {
-	glm::vec3 direction = scene[0].rb.pos - Camera::camera.rb.pos;
-	scene[0].rb.setVelocity(direction, -1.0f); // skull follows you
-	scene[0].rotation = glm::atan(direction.x, direction.z) - PI; // looks your direction
-	float rotation = glm::atan(direction.x, direction.y);
-	glm::mat4 M = glm::rotate(glm::mat4(1.0f), rotation, glm::vec3());
+float updateSkull() {
+	glm::vec3 direction = skull.rb.pos - Camera::camera.rb.pos;
+	skull.rb.setVelocity(direction, -1.0f); // skull follows you
+	skull.rotation = glm::atan(direction.x, direction.z) - PI; // looks your direction
+	float rotation = glm::atan(direction.y, direction.x);
+	return rotation;
 }
 
 //Procedura rysująca zawartość sceny
@@ -332,15 +333,18 @@ void drawScene(GLFWwindow* window, float dt) {
 	torch.rotation = -float(Camera::camera.yaw * PI / 180 + PI / 2);
 	M = glm::translate(M, Camera::camera.rb.pos);
 
-	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, dt, M);
-	updateSkull();
+	torch.render2(Camera::camera.rb.pos, skull.rb.pos, dt, M);
+	float rotation = updateSkull();
+	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
+
 
 	bool test = true;
 	RigidBody temp = Camera::camera.rb;
 	temp.update(dt);
+	
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+		object.render(Camera::camera.rb.pos, skull.rb.pos, dt);
 		if (object.br.containsPoint(temp.pos)) { // sprawdź czy kolizja
 			test = false;
 			printf("Max: %f %f %f\nMin: %f %f %f\n\n", object.br.max.x, object.br.max.y, object.br.max.z, object.br.min.x, object.br.min.y, object.br.min.z);

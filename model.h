@@ -47,6 +47,8 @@ public:
 
 	void render2(glm::vec3 cameraPos, glm::vec3 skullPos, float dt, glm::mat4 transformation = glm::mat4(1.0f));
 
+	void render3(glm::vec3 cameraPos, glm::vec3 skullPos, float dt, float rotation2);
+
 };
 
 #endif
