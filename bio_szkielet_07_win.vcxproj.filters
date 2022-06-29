@@ -45,9 +45,6 @@
     <ClInclude Include="rigidbody.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>io</Filter>
-    </ClInclude>
     <ClInclude Include="environment.h">
       <Filter>physics</Filter>
     </ClInclude>
@@ -82,9 +79,6 @@
     </ClCompile>
     <ClCompile Include="rigidbody.cpp">
       <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="environment.cpp">
       <Filter>physics</Filter>

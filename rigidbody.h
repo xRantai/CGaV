@@ -25,6 +25,8 @@ public:
 	void applyImpulse(glm::vec3 direction, float magnitude, float dt);
 
 	void transferEnergy(float joules);
+
+	void setVelocity(glm::vec3 v, float magnitude);
 };
 
 #endif

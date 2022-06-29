@@ -37,3 +37,7 @@ void RigidBody::transferEnergy(float joules) {
 	float deltaV = sqrt(2 * abs(joules) / mass);
 	velocity += joules > 0 ? deltaV : -deltaV;
 }
+
+void RigidBody::setVelocity(glm::vec3 vel, float magnitude) {
+	velocity = glm::normalize(vel) * magnitude;
+}

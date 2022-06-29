@@ -79,6 +79,8 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
+	scene.push_back(Model(modelTemplates[4], glm::vec3(7.0f, 1.5f, 2.0f), 0.0f, glm::vec3(0.01f))); // skull
+
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
 			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f*j), float(0), glm::vec3(2.3f)));
@@ -173,7 +175,6 @@ void initModels() {
 
 
 	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.4f), float(PI/2), glm::vec3(0.05f))); //chest model
-
 }
 
 //Procedura inicjująca
@@ -200,6 +201,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	textures.push_back(textureLoader.load("chest.png"));
 	modelTemplates.push_back(Model("chest.obj", textureLoader.getCurrentID()));
+
+	textures.push_back(textureLoader.load("skull.png"));
+	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID(), BoundTypes::SPHERE));
 }
 
 //Zwolnienie zasobów zajętych przez program
@@ -211,11 +215,18 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 }
 
+void updateSkull() {
+	scene[0].rb.setVelocity(scene[0].rb.pos - Camera::camera.cameraPos, 0.0f); // skull follows you
+	scene[0].rotation = glm::atan(scene[0].rb.pos.x - Camera::camera.cameraPos.x, scene[0].rb.pos.z - Camera::camera.cameraPos.z);
+}
+
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float dt) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
+
+	updateSkull();
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(dt);
