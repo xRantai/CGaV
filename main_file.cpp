@@ -79,7 +79,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[4], glm::vec3(7.0f, 1.5f, 2.0f), 0.0f, glm::vec3(0.01f))); // skull
+	scene.push_back(Model(modelTemplates[4], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f))); // skull
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
@@ -216,8 +216,9 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 void updateSkull() {
-	scene[0].rb.setVelocity(scene[0].rb.pos - Camera::camera.cameraPos, 0.0f); // skull follows you
-	scene[0].rotation = glm::atan(scene[0].rb.pos.x - Camera::camera.cameraPos.x, scene[0].rb.pos.z - Camera::camera.cameraPos.z);
+	glm::vec3 direction = scene[0].rb.pos - Camera::camera.cameraPos;
+	scene[0].rb.setVelocity(direction, -1.0f); // skull follows you
+	scene[0].rotation = glm::atan(direction.x, direction.z); // looks your direction
 }
 
 //Procedura rysująca zawartość sceny
