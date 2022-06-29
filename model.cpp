@@ -29,83 +29,44 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		/*
 			Calculations for Bounding Region depending on rotation angle
 		*/
-		if (rotation == 0.0f) {
-			if (first) {
-				min.x = vertex.x;
-				min.y = vertex.y;
-				min.z = vertex.z;
-				max = min;
-			}
 
-			for (int j = 0; j < 3; j++) {
-				if (vertex[j] < min[j]) min[j] = vertex[j];
-				if (vertex[j] > max[j]) max[j] = vertex[j];
-			}
+		glm::vec3 temp = scale;
+
+		if (rotation == 0.0f) {
+			temp.x *= -vertex.z; //90
+			temp.y *= vertex.y;
+			temp.z *= temp.x;
+
 		}
 		if (rotation == float(PI / 2)) {
-			if (first) {
-				min.x = -vertex.z;
-				min.y = vertex.y;
-				min.z = vertex.x;
-				max = min;
-			}
+			temp.x *= -vertex.z;//180
+			temp.y *= vertex.y;
+			temp.z *= -vertex.x;
 
-			if (-vertex.z < min.x)
-				min.x = -vertex.z;
-			if (-vertex.z > max.x)
-				max.x = -vertex.z;
-			if (vertex.y < min.y)
-				min.y = vertex.y;
-			if (vertex.y > max.y)
-				max.y = vertex.y;
-			if (vertex.x < min.z)
-				min.z = vertex.x;
-			if (vertex.x > max.z)
-				max.z = vertex.x;
 		}
-		if (rotation == float(PI) || rotation == float(-PI)) {
-			if (first) {
-				min.x = -vertex.z;
-				min.y = vertex.y;
-				min.z = -vertex.x;
-				max = min;
-			}
+		if (rotation = float( - PI / 2)) {
+			temp.x *= vertex.x; //0
+			temp.y *= vertex.y;
+			temp.z *= vertex.z;
 
-			if (-vertex.z < min.x)
-				min.x = -vertex.z;
-			if (-vertex.z > max.x)
-				max.x = -vertex.z;
-			if (vertex.y < min.y)
-				min.y = vertex.y;
-			if (vertex.y > max.y)
-				max.y = vertex.y;
-			if (-vertex.x < min.z)
-				min.z = -vertex.x;
-			if (-vertex.x > max.z)
-				max.z = -vertex.x;
 		}
-		if (rotation == float( - PI / 2)) {
-			if (first) {
-				min.x = vertex.x;
-				min.y = vertex.y;
-				min.z = -vertex.x;
-				max = min;
-			}
+		else {
+			temp.x *= vertex.z;//-90
+			temp.y *= vertex.y;
+			temp.z *= -vertex.x;
 
-			if (vertex.z < min.x)
-				min.x = vertex.z;
-			if (vertex.z > max.x)
-				max.x = vertex.z;
-			if (vertex.y < min.y)
-				min.y = vertex.y;
-			if (vertex.y > max.y)
-				max.y = vertex.y;
-			if (-vertex.x < min.z)
-				min.z = -vertex.x;
-			if (-vertex.x > max.z)
-				max.z = -vertex.x;
 		}
 
+		if (first) {
+			min = temp;
+			max = temp;
+			first = false;
+		}
+
+		for (int j = 0; j < 3; j++) {
+			if (temp[j] < min[j]) min[j] = temp[j];
+			if (temp[j] > max[j]) max[j] = temp[j];
+		}
 
 		aiVector3D normal = mesh->mNormals[i];
 		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
@@ -158,9 +119,8 @@ Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool h
 		br = BoundingRegion();
 	}
 	else {
-		br.max = model.br.max + pos;
-		br.min = model.br.min + pos;
-		printf("%f %f %f\n\n", br.max.x, br.max.y, br.max.z);
+		br.max = model.br.max * scale + pos;
+		br.min = model.br.min * scale + pos;
 	}
 } 
 

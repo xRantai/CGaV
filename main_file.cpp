@@ -333,17 +333,18 @@ void drawScene(GLFWwindow* window, float dt) {
 	M = glm::translate(M, Camera::camera.rb.pos);
 
 	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, dt, M);
-	updateSkull();
+	//updateSkull();
 
 	bool test = true;
 	RigidBody temp = Camera::camera.rb;
 	temp.update(dt);
+	printf("Player pos:\t%f\t%f\t%f\n", Camera::camera.rb.pos.x, Camera::camera.rb.pos.y, Camera::camera.rb.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
 		if (object.br.containsPoint(temp.pos)) { // sprawdź czy kolizja
 			test = false;
-			//printf("Max: %f %f %f\nMin: %f %f %f\n\n", object.br.max.x, object.br.max.y, object.br.max.z, object.br.min.x, object.br.min.y, object.br.min.z);
+			printf("Collision at:\nMax: %f %f %f\nMin: %f %f %f\n\n", object.br.max.x, object.br.max.y, object.br.max.z, object.br.min.x, object.br.min.y, object.br.min.z);
 		}
 	}
 
@@ -385,13 +386,13 @@ int main()
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-	initModels();
-	//scene.push_back(Model(modelTemplates[0], glm::vec3(0.0f), 0.0f, glm::vec3(10.0f)));
+	//initModels();
+	scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), 0.0f, glm::vec3(0.5f)));
+	printf("Object created at:\nMax: %f %f %f\nMin: %f %f %f\n\n", scene[0].br.max.x, scene[0].br.max.y, scene[0].br.max.z, scene[0].br.min.x, scene[0].br.min.y, scene[0].br.min.z);
 
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli
-	printf("Max: %f %f %f\nMin: %f %f %f\n\n", scene[1].br.max.x, scene[1].br.max.y, scene[1].br.max.z, scene[1].br.min.x, scene[1].br.min.y, scene[1].br.min.z);
-	printf("%f", (float)(~0));
+	
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
