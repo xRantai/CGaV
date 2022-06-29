@@ -36,11 +36,8 @@ public:
 
 	glm::mat4 getViewMatrix();
 
-	void setScene(std::vector<Model>& vec);
-
 private:
 	void updateCameraVectors();
-	std::vector<Model> scene;
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include "constants.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -43,7 +44,7 @@ public:
 
 	void render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt);
 
-	void render2(glm::vec3 cameraPos, glm::vec3 skullPos, glm::mat4 transformation, float dt);
+	void render2(glm::vec3 cameraPos, glm::vec3 skullPos, float dt, glm::mat4 transformation = glm::mat4(1.0f));
 
 };
 

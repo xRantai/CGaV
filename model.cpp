@@ -25,10 +25,59 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		aiVector3D vertex = mesh->mVertices[i];
 		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
 
-		for (int j = 0; j < 3; j++) {//calculations for Bounding Region
-			if (vertex[j] < min[j]) min[j] = vertex[j];
-			if (vertex[j] > max[j]) max[j] = vertex[j];
+		/*
+			Calculations for Bounding Region depending on rotation angle
+		*/
+
+		if (rotation == 0.0f) {
+			for (int j = 0; j < 3; j++) {
+				if (vertex[j] < min[j]) min[j] = vertex[j];
+				if (vertex[j] > max[j]) max[j] = vertex[j];
+			}
 		}
+		if (rotation == float(PI / 2)) {
+			if (-vertex.z < min.x)
+				min.x = -vertex.z;
+			if (-vertex.z > max.x)
+				max.x = -vertex.z;
+			if (vertex.y < min.y)
+				min.y = vertex.y;
+			if (vertex.y > max.y)
+				max.y = vertex.y;
+			if (vertex.x < min.z)
+				min.z = vertex.x;
+			if (vertex.x > max.z)
+				max.z = vertex.x;
+		}
+		if (rotation == float(PI) || rotation == float(-PI)) {
+			if (-vertex.z < min.x)
+				min.x = -vertex.z;
+			if (-vertex.z > max.x)
+				max.x = -vertex.z;
+			if (vertex.y < min.y)
+				min.y = vertex.y;
+			if (vertex.y > max.y)
+				max.y = vertex.y;
+			if (-vertex.x < min.z)
+				min.z = -vertex.x;
+			if (-vertex.x > max.z)
+				max.z = -vertex.x;
+		}
+		if (rotation == float( - PI / 2)) {
+			if (vertex.z < min.x)
+				min.x = vertex.z;
+			if (vertex.z > max.x)
+				max.x = vertex.z;
+			if (vertex.y < min.y)
+				min.y = vertex.y;
+			if (vertex.y > max.y)
+				max.y = vertex.y;
+			if (-vertex.x < min.z)
+				min.z = -vertex.x;
+			if (-vertex.x > max.z)
+				max.z = -vertex.x;
+		}
+
 
 		aiVector3D normal = mesh->mNormals[i];
 		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
@@ -77,6 +126,13 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission)
 	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), rotation(rotation), scale(scale) {
 	rb.pos = pos;
+	if (!hasCollission) {
+		br = BoundingRegion();
+	}
+	else {
+		br.max = model.br.max + pos;
+		br.min = model.br.min + pos;
+	}
 } 
 
 void Model::render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt) {
@@ -132,7 +188,7 @@ void Model::render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt) {
 	glDisableVertexAttribArray(shader->a("camearaPos"));
 }
 
-void Model::render2(glm::vec3 cameraPos, glm::vec3 skullPos, glm::mat4 transformation, float dt) {
+void Model::render2(glm::vec3 cameraPos, glm::vec3 skullPos, float dt, glm::mat4 transformation) {
 	rb.update(dt);
 
 	transformation = glm::rotate(transformation, rotation, glm::vec3(0.0f, 1.0f, 0.0f));

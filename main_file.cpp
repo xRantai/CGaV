@@ -82,7 +82,7 @@ void processInput(GLFWwindow* window, double dt) {
 }
 
 void initModels() {
-	scene.push_back(Model(modelTemplates[5], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f))); // skull
+	scene.push_back(Model(modelTemplates[5], glm::vec3(7.0f, 1.5f, 1.0f), 0.0f, glm::vec3(0.1f), false)); // skull
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
@@ -103,7 +103,7 @@ void initModels() {
 	}
 
 
-	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f))); //hole model
+	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f), false)); //hole model
 
 	for (int i = 0; i < 4; i++) {
 		scene.push_back(Model(modelTemplates[0], glm::vec3(8.25f - i * 2.25f, 0.375f, 3.0f), float(0), glm::vec3(1.5f))); //first floor walls
@@ -314,7 +314,9 @@ void freeOpenGLProgram(GLFWwindow* window) {
 void updateSkull() {
 	glm::vec3 direction = scene[0].rb.pos - Camera::camera.rb.pos;
 	scene[0].rb.setVelocity(direction, -1.0f); // skull follows you
-	scene[0].rotation = glm::atan(direction.x, direction.z); // looks your direction
+	scene[0].rotation = glm::atan(direction.x, direction.z) - PI; // looks your direction
+	float rotation = glm::atan(direction.x, direction.y);
+	glm::mat4 M = glm::rotate(glm::mat4(1.0f), rotation, glm::vec3());
 }
 
 //Procedura rysująca zawartość sceny
@@ -323,20 +325,29 @@ void drawScene(GLFWwindow* window, float dt) {
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
 
-
-	Model torch = Model(modelTemplates[4], glm::vec3(0.3f,-0.5f,-1.0f), -float(Camera::camera.yaw*PI/180+PI/2), glm::vec3(0.5f));
+	Model torch = Model(modelTemplates[4], glm::vec3(0.3f,-0.5f,-1.0f), -float(Camera::camera.yaw*PI/180+PI/2), glm::vec3(0.5f), false);
 	glm::mat4 M = glm::mat4(1.0f);
 
 	M = glm::translate(M, Camera::camera.rb.pos);
 
-	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, M, dt);
+	torch.render2(Camera::camera.rb.pos, scene[0].rb.pos, dt, M);
 	updateSkull();
+
+	bool test = true;
+	RigidBody temp = Camera::camera.rb;
+	temp.update(dt);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+		if (object.br.containsPoint(temp.pos)) { // sprawdź czy kolizja
+			test = false;
+			printf("Max: %f %f %f\nMin: %f %f %f\n\n", object.br.max.x, object.br.max.y, object.br.max.z, object.br.min.x, object.br.min.y, object.br.min.z);
+		}
 	}
 
-	Camera::camera.rb.update(dt);
+	//if (test) 
+		Camera::camera.rb = temp; // jeżeli brak kolizji zmień pozycje
+	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
 }
@@ -373,6 +384,7 @@ int main()
 
 	initOpenGLProgram(window); //Operacje inicjujące
 	initModels();
+	//scene.push_back(Model(modelTemplates[0], glm::vec3(0.0f), 0.0f, glm::vec3(10.0f)));
 
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli

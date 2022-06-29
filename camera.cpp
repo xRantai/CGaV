@@ -55,20 +55,13 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 		rb.velocity -= right * speed;
 		break;
 	case CameraDirection::UP:
-		rb.velocity += worldUp * 10.0f;
+		rb.velocity += worldUp * 1.0f;
 		break;
 	}
-	
-	rb.update(dt);
-	rb.velocity = glm::vec3(0, rb.velocity.y, 0);
 }
 
 glm::mat4 Camera::getViewMatrix() {
 	return glm::lookAt(rb.pos, rb.pos + cameraFront, cameraUp);
-}
-
-void Camera::setScene(std::vector<Model>& vec) {
-	scene = vec;
 }
 
 void Camera::updateCameraVectors() {
