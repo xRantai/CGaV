@@ -338,18 +338,22 @@ void drawScene(GLFWwindow* window, float dt) {
 	bool test = true;
 	RigidBody temp = Camera::camera.rb;
 	temp.update(dt);
-	printf("Player pos:\t%f\t%f\t%f\n", Camera::camera.rb.pos.x, Camera::camera.rb.pos.y, Camera::camera.rb.pos.z);
+	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
-		if (object.br.containsPoint(temp.pos)) { // sprawdź czy kolizja
+
+		if (object.br.min.x <= temp.pos.x && object.br.max.x >= temp.pos.x && object.br.min.y <= temp.pos.y && object.br.max.y >= temp.pos.y && object.br.min.z <= temp.pos.z && object.br.max.z >= temp.pos.z) {
 			test = false;
-			printf("Collision at:\nMax: %f %f %f\nMin: %f %f %f\n\n", object.br.max.x, object.br.max.y, object.br.max.z, object.br.min.x, object.br.min.y, object.br.min.z);
+			printf("Player pos:\t%f\t%f\t%f\nColission with: \n%f\t%f\t%f\n%f\t%f\t%f\n\n", temp.pos.x, temp.pos.y, temp.pos.z, object.br.min.x, object.br.min.y, object.br.min.z, object.br.max.x, object.br.max.y, object.br.max.z);
 		}
 	}
 
-	if (test) 
-		Camera::camera.rb = temp; // jeżeli brak kolizji zmień pozycje
+	if (test) {
+		Camera::camera.rb = temp;
+	}
+
+	
 	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
 
 	glfwSwapBuffers(window); //Skopiuj bufor tylny do bufora przedniego
