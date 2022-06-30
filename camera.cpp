@@ -55,7 +55,7 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 		rb.velocity -= right * speed;
 		break;
 	case CameraDirection::UP:
-		rb.velocity += worldUp * 1.0f;
+		rb.velocity += worldUp * 10.0f;
 		break;
 	}
 }

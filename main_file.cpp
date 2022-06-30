@@ -78,7 +78,7 @@ void processInput(GLFWwindow* window, double dt) {
 	if (Keyboard::key(GLFW_KEY_A)) {
 		Camera::camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
-	if (Keyboard::key(GLFW_KEY_SPACE)) {
+	if (Keyboard::keyWentDown(GLFW_KEY_SPACE)) {
 		Camera::camera.updateCameraPos(CameraDirection::UP, dt);
 	}
 }
@@ -338,22 +338,39 @@ void drawScene(GLFWwindow* window, float dt) {
 	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
 
 
-	bool test = true;
-	RigidBody temp = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, Camera::camera.rb.velocity, Camera::camera.rb.acceleration);
-	temp.update(dt);
+	bool test[3] = { true, true, true };
+	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
+	tempX.update(dt);
+	RigidBody tempY = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	tempY.update(dt);
+	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
+	tempZ.update(dt);
 	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
 
-		if (object.br.containsPoint(temp.pos)) {
-			test = false;
-			printf("Player pos:\t%f\t%f\t%f\nColission with: \n%f\t%f\t%f\n%f\t%f\t%f\n\n", temp.pos.x, temp.pos.y, temp.pos.z, object.br.min.x, object.br.min.y, object.br.min.z, object.br.max.x, object.br.max.y, object.br.max.z);
+		if (object.br.containsPoint(tempX.pos)) {
+			test[0] = false;
+		}
+		if (object.br.containsPoint(tempY.pos)) {
+			test[1] = false;
+		}
+		if (object.br.containsPoint(tempZ.pos)) {
+			test[2] = false;
 		}
 	}
 
-	if (test) {
-		Camera::camera.rb = temp;
+	RigidBody out;
+
+	if (test[0]) {
+		Camera::camera.rb.pos.x = tempX.pos.x;
+	}
+	if (test[1]) {
+		Camera::camera.rb.pos.y = tempY.pos.y;
+	}
+	if (test[2]) {
+		Camera::camera.rb.pos.z = tempZ.pos.z;
 	}
 	
 	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
