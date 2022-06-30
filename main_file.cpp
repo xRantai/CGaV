@@ -40,12 +40,12 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 Camera Camera::camera(glm::vec3(7.0f, 1.0f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-Model torch; 
-Model skull;
 
 TextureLoader textureLoader;
 std::vector<Model> modelTemplates;
 std::vector<Model> scene; // wszystkie renderowane modele
+Model torch; 
+Model skull;
 
 
 //Procedura obsługi błędów
@@ -343,7 +343,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyść bufor koloru i bufor głębokości
 
 	view = Camera::camera.getViewMatrix(); // wylicz nową macierz V i przekaż do modeli
-
 	
 	glm::mat4 M = glm::mat4(1.0f);
 	torch.rotation = -float(Camera::camera.yaw * PI / 180 + PI / 2);
@@ -363,8 +362,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	tempYCeiling.update(dt);
 	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
-
-	//printf("%f %f %f\n", Camera::camera.rb.pos.x, Camera::camera.rb.pos.y, Camera::camera.rb.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
@@ -441,7 +438,6 @@ int main()
 
 	initOpenGLProgram(window); //Operacje inicjujące
 	initModels();
-	//scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), Angles::d270, glm::vec3(0.5f)));
 
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli
