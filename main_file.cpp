@@ -352,7 +352,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	float rotation = updateSkull();
 	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
 
-
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
 	RigidBody tempX = RigidBody(Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
@@ -449,7 +448,7 @@ int main()
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
-		processInput(window, deltaTime);
+		processInput(window, deltaTime);//przetwórz input z klawiatury
 
 		drawScene(window, deltaTime); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
