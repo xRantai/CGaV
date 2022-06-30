@@ -37,7 +37,7 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 #include "mouse.h"
 #include "camera.h"
 
-Camera Camera::camera(glm::vec3(7.0f, 1.2f, 2.0f));
+Camera Camera::camera(glm::vec3(7.0f, 1.5f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Model torch; 
@@ -88,182 +88,188 @@ void initModels() {
 
 	for (int i = 0; i < 7; i++) { //ceiling
 		for (int j = 0; j < 7; j++) {
-			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f * j), float(0), glm::vec3(2.3f)));
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 1.8f, 6.5f - 2.3f * j), Angles::d0, glm::vec3(2.3f)));
+			scene[scene.size() - 1].br.max = glm::vec3(100.0f, 100.0f, 100.0f);
+			scene[scene.size() - 1].br.min = glm::vec3(-100.0f, 1.8f, -100.0f);
 		}
 	}
 	for (int i = 0; i < 7; i++) { //first floor floor
 		for (int j = 0; j < 7; j++) {
 			if (i == 3 && j == 4) { continue; }
-			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 0.0f, 6.5f - 2.3f * j), float(0), glm::vec3(2.3f)));
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 0.0f, 6.5f - 2.3f * j), Angles::d0, glm::vec3(2.3f)));
+			scene[scene.size() - 1].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
+			scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
 		}
 	}
 
 	for (int i = 0; i < 7; i++) { //second floor floor
 		for (int j = 0; j < 7; j++) {
-			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, -1.8f, 6.5f - 2.3f * j), float(0), glm::vec3(2.3f)));
+			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, -1.8f, 6.5f - 2.3f * j), Angles::d0, glm::vec3(2.3f)));
+			scene[scene.size() - 1].br.max = glm::vec3(100.0f, -1.8f, 100.0f);
+			scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -100.0f, -100.0f);
 		}
 	}
 
 
-	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), float(0), glm::vec3(1.2f), false)); //hole model
+	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), Angles::d0, glm::vec3(1.2f), false)); //hole model
 
 	for (int i = 0; i < 4; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(8.25f - i * 2.25f, 0.375f, 3.0f), float(0), glm::vec3(1.5f))); //first floor walls
+		scene.push_back(Model(modelTemplates[0], glm::vec3(8.25f - i * 2.25f, 0.375f, 3.0f), Angles::d0, glm::vec3(1.5f))); //first floor walls
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(0.075f, 0.375f, 4.125f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.075f, 0.375f, 4.125f), Angles::d90, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 3; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(1.2f + i * 2.25f, 0.375f, 5.55f), float(PI), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(1.2f + i * 2.25f, 0.375f, 5.55f), Angles::d180, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(0.3f, 0.375f, 2.145f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.3f, 0.375f, 2.145f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.825f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.075f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.825f, 0.375f, 0.72f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.075f, 0.375f, 0.72f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 1.845f), float(PI / 2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 4.095f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 1.845f), Angles::d90, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.5f, 0.375f, 4.095f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 4.095f), float(PI / 2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 6.345f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 4.095f), Angles::d90, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.25f, 0.375f, 6.345f), Angles::d90, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 5; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(-1.125f + 2.25f * i, 0.375f, 7.77f), float(PI), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-1.125f + 2.25f * i, 0.375f, 7.77f), Angles::d180, glm::vec3(1.5f)));
 	}
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, 0.375f, 6.645f - 2.25f * i), float(-PI / 2), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, 0.375f, 6.645f - 2.25f * i), Angles::d270, glm::vec3(1.5f)));
 	}
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f - 2.25f * i, 0.375f, -8.28f), float(0), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f - 2.25f * i, 0.375f, -8.28f), Angles::d0, glm::vec3(1.5f)));
 	}
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(-6.75f, 0.375f, -7.155f + 2.25f * i), float(PI / 2), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-6.75f, 0.375f, -7.155f + 2.25f * i), Angles::d90, glm::vec3(1.5f)));
 	}
 
 	for (int i = 0; i < 2; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(-5.625f + 2.25f * i, 0.375f, 7.77f), float(PI), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-5.625f + 2.25f * i, 0.375f, 7.77f), Angles::d180, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.925f, 0.375f, 0.72f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f, 0.375f, 0.72f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.925f, 0.375f, 0.72f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(4.725f, 0.375f, -0.135f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(4.725f, 0.375f, -0.135f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.575f, 0.375f, -1.335f), float(-PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.575f, 0.375f, -1.335f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(7.0f, 0.375f, -4.7f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(7.0f, 0.375f, -4.7f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.875f, 0.375f, -6.125f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(3.625f, 0.375f, -6.125f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.875f, 0.375f, -6.125f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(3.625f, 0.375f, -6.125f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -5.0f), float(PI / 2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -2.75f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -5.0f), Angles::d90, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.2f, 0.375f, -2.75f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(1.345f, 0.375f, -1.55f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(1.345f, 0.375f, -1.55f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -2.405f), float(-PI / 2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -4.655f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -2.405f), Angles::d270, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.145f, 0.375f, -4.655f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.971f, 0.375f, -6.08f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.221f, 0.375f, -6.08f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.971f, 0.375f, -6.08f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.221f, 0.375f, -6.08f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.646f, 0.375f, -4.955f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.646f, 0.375f, -4.955f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.521f, 0.375f, -3.53f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.521f, 0.375f, -3.53f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.321f, 0.375f, -2.675f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.321f, 0.375f, -2.675f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(8.15f, -1.45f, -1.575f), float(0), glm::vec3(1.5f))); //second floor walls
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.9f, -1.45f, -1.575f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(8.15f, -1.45f, -1.575f), Angles::d0, glm::vec3(1.5f))); //second floor walls
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.9f, -1.45f, -1.575f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(4.475f, -1.45f, -0.45f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(4.475f, -1.45f, -0.45f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(3.62f, -1.45f, 0.75f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(1.32f, -1.45f, 0.75f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(3.62f, -1.45f, 0.75f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(1.32f, -1.45f, 0.75f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.195f, -1.45f, 1.875f), float(PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.195f, -1.45f, 1.875f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(8.15f, -1.45f, -1.575f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(8.15f, -1.45f, -1.575f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -2.25f), float(-PI/2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -4.55f), float(-PI / 2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -6.85f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -2.25f), Angles::d270, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -4.55f), Angles::d270, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(9.3f, -1.45f, -6.85f), Angles::d270, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f - i*2.3f, -1.45f, -8.275f), float(0), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(8.175f - i*2.3f, -1.45f, -8.275f), Angles::d0, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(4.7f, -1.45f, -6.85f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(4.7f, -1.45f, -6.85f), Angles::d270, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(-7.05f, -1.45f, -7.15f + i*2.3f), float(PI / 2), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-7.05f, -1.45f, -7.15f + i*2.3f), Angles::d90, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, -5.725f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, -5.725f), Angles::d180, glm::vec3(1.5f)));
 	
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, -1.125f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, -1.125f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.495f, -1.45f, -2.25f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.495f, -1.45f, -2.25f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.64f, -1.45f, -3.45f), float(PI), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.34f, -1.45f, -3.45f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.64f, -1.45f, -3.45f), Angles::d180, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.34f, -1.45f, -3.45f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.215f, -1.45f, -4.575f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.215f, -1.45f, -4.575f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, 1.175f), float(PI), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.62f, -1.45f, 1.175f), float(PI), glm::vec3(1.5f)));//tu
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f, -1.45f, 1.175f), Angles::d180, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.62f, -1.45f, 1.175f), Angles::d180, glm::vec3(1.5f)));//tu
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.195f, -1.45f, 0.05f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.195f, -1.45f, 0.05f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.34f, -1.45f, -1.15f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.34f, -1.45f, -1.15f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(0.96f, -1.45f, -1.15f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(0.96f, -1.45f, -1.15f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.385f, -1.45f, -2.275f), float(-PI/2), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.385f, -1.45f, -4.575f), float(-PI / 2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.385f, -1.45f, -2.275f), Angles::d270, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.385f, -1.45f, -4.575f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(3.24f, -1.45f, -3.475f), float(PI), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.54f, -1.45f, -3.475f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(3.24f, -1.45f, -3.475f), Angles::d180, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.54f, -1.45f, -3.475f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(6.965f, -1.45f, -4.6f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(6.965f, -1.45f, -4.6f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.42f, -1.45f, 2.03f), float(PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-2.42f, -1.45f, 2.03f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.295f, -1.45f, 3.455f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-1.295f, -1.45f, 3.455f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.095f, -1.45f, 4.31f), float(PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.095f, -1.45f, 4.31f), Angles::d90, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.95f, -1.45f, 5.51f), float(0), glm::vec3(1.5f)));
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.25f, -1.45f, 5.51f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-0.95f, -1.45f, 5.51f), Angles::d0, glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-3.25f, -1.45f, 5.51f), Angles::d0, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.45f, -1.45f, 4.655f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(-4.45f, -1.45f, 4.655f), Angles::d270, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 7; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f + i * 2.3f, -1.45f, 8.075f), float(PI), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(-5.925f + i * 2.3f, -1.45f, 8.075f), Angles::d180, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(2.4f, -1.45f, 6.95f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(2.4f, -1.45f, 6.95f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(3.255f, -1.45f, 5.75f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(3.255f, -1.45f, 5.75f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(4.68f, -1.45f, 4.625f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(4.68f, -1.45f, 4.625f), Angles::d270, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(5.535f, -1.45f, 3.425f), float(PI), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(5.535f, -1.45f, 3.425f), Angles::d180, glm::vec3(1.5f)));
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(6.96f, -1.45f, 2.3f), float(-PI/2), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(6.96f, -1.45f, 2.3f), Angles::d270, glm::vec3(1.5f)));
 
 	for (int i = 0; i < 4; i++) {
-		scene.push_back(Model(modelTemplates[0], glm::vec3(9.303f, -1.45f, 6.95f-2.3f*i), float(-PI / 2), glm::vec3(1.5f)));
+		scene.push_back(Model(modelTemplates[0], glm::vec3(9.303f, -1.45f, 6.95f-2.3f*i), Angles::d270, glm::vec3(1.5f)));
 	}
 
-	scene.push_back(Model(modelTemplates[0], glm::vec3(8.178f, -1.45f, 5.525f), float(0), glm::vec3(1.5f)));
+	scene.push_back(Model(modelTemplates[0], glm::vec3(8.178f, -1.45f, 5.525f), Angles::d0, glm::vec3(1.5f)));
 
 
-	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.85f), float(PI / 2), glm::vec3(0.05f))); //chest model
+	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.85f), Angles::d90, glm::vec3(0.05f))); //chest model
 
 	torch = Model(modelTemplates[4], glm::vec3(0.3f, -0.5f, -1.0f), -float(Camera::camera.yaw * PI / 180 + PI / 2), glm::vec3(0.5f), false);
 }
@@ -338,39 +344,59 @@ void drawScene(GLFWwindow* window, float dt) {
 	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
 
 
-	bool test[3] = { true, true, true };
-	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
+	bool ground = false, ceiling = false, wallX = false, wallZ = false;
+	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos - glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
-	RigidBody tempY = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
-	tempY.update(dt);
-	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
+	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos - glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	tempYGround.update(dt);
+	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	tempYCeiling.update(dt);
+	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos - glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
-	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
+
+	printf("%f %f %f\n", Camera::camera.rb.velocity.y, Camera::camera.rb.acceleration.y, Camera::camera.rb.pos.y);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
 
 		if (object.br.containsPoint(tempX.pos)) {
-			test[0] = false;
+			wallX = true;
 		}
-		if (object.br.containsPoint(tempY.pos)) {
-			test[1] = false;
+		if (object.br.containsPoint(tempYGround.pos)) {
+			ground = true;
 		}
 		if (object.br.containsPoint(tempZ.pos)) {
-			test[2] = false;
+			wallZ = true;
+		}
+		if (object.br.containsPoint(tempYCeiling.pos)) {
+			ceiling = true;
 		}
 	}
 
 	RigidBody out;
 
-	if (test[0]) {
+	if (!wallX) { // przesunięcie w osi X
 		Camera::camera.rb.pos.x = tempX.pos.x;
 	}
-	if (test[1]) {
-		Camera::camera.rb.pos.y = tempY.pos.y;
+
+	if (ground) { // Jeżeli na ziemi step assist
+		Camera::camera.rb.velocity.y = 0.001f;
 	}
-	if (test[2]) {
+	else { // Jeżeli nie ma podłogi spadaj
+		Camera::camera.rb.pos.y = tempYCeiling.pos.y;
+		Camera::camera.rb.velocity.y = tempYCeiling.velocity.y;
+	}
+
+	if (!wallZ) { // przesunięcie w osi Z
 		Camera::camera.rb.pos.z = tempZ.pos.z;
+	}
+
+	if (ceiling) { // jeżeli głowa w suficie zatrzymaj
+		Camera::camera.rb.velocity.y = -0.001f;
+	}
+	else { // jeżeli nie to możesz ciągle iść w górę
+		Camera::camera.rb.pos.y = tempYCeiling.pos.y;
+		Camera::camera.rb.velocity.y = tempYCeiling.velocity.y;
 	}
 	
 	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
@@ -409,9 +435,8 @@ int main()
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-	//initModels();
-	scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), 0.0f, glm::vec3(0.5f)));
-	printf("Object created at:\nMax: %f %f %f\nMin: %f %f %f\n\n", scene[0].br.max.x, scene[0].br.max.y, scene[0].br.max.z, scene[0].br.min.x, scene[0].br.min.y, scene[0].br.min.z);
+	initModels();
+	//scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), Angles::d270, glm::vec3(0.5f)));
 
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli

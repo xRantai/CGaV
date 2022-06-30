@@ -8,7 +8,7 @@ Camera::Camera(glm::vec3 position)
 	cameraFront(glm::vec3(0.0f, 0.0f, -1.0f))
 {
 	rb.pos = position;
-	//rb.acceleration = Environment::gravitationalAcceleration;
+	rb.acceleration = Environment::gravitationalAcceleration;
 	updateCameraVectors();
 }
 
@@ -55,7 +55,7 @@ void Camera::updateCameraPos(CameraDirection direction, double dt) {
 		rb.velocity -= right * speed;
 		break;
 	case CameraDirection::UP:
-		rb.velocity += worldUp * 10.0f;
+		rb.velocity += worldUp * 2.0f;
 		break;
 	}
 }

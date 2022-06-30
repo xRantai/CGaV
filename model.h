@@ -25,6 +25,13 @@ extern glm::mat4 perspective;
 extern glm::mat4 view;
 extern std::vector<GLuint> textures;
 
+enum class Angles {
+	d0,
+	d90,
+	d180,
+	d270
+};
+
 class Model {
 public:
 	float rotation;
@@ -43,6 +50,7 @@ public:
 	Model();
 	Model(std::string plik, unsigned int texID, BoundTypes boundType = BoundTypes::AABB, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
 	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission = true); // tworzenie modelu z istniej¹cego modelu
+	Model(Model model, glm::vec3 pos, Angles rotationAngle, glm::vec3 scale, bool hasCollission = true); // tworzenie modelu który mogê obróciæ
 
 	void render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt);
 

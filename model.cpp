@@ -8,8 +8,6 @@ Model::Model() {}
 Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: rotation(rotation), scale(scale), texID(texID) {
 	br.type = boundType;
-	bool first = true;
-	glm::vec3 min, max;
 
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
@@ -26,48 +24,6 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		aiVector3D vertex = mesh->mVertices[i];
 		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
 
-		/*
-			Calculations for Bounding Region depending on rotation angle
-		*/
-
-		glm::vec3 temp = scale;
-
-		if (rotation == 0.0f) {
-			temp.x *= -vertex.z; //90
-			temp.y *= vertex.y;
-			temp.z *= temp.x;
-
-		}
-		if (rotation == float(PI / 2)) {
-			temp.x *= -vertex.z;//180
-			temp.y *= vertex.y;
-			temp.z *= -vertex.x;
-
-		}
-		if (rotation = float( - PI / 2)) {
-			temp.x *= vertex.x; //0
-			temp.y *= vertex.y;
-			temp.z *= vertex.z;
-
-		}
-		else {
-			temp.x *= vertex.z;//-90
-			temp.y *= vertex.y;
-			temp.z *= -vertex.x;
-
-		}
-
-		if (first) {
-			min = temp;
-			max = temp;
-			first = false;
-		}
-
-		for (int j = 0; j < 3; j++) {
-			if (temp[j] < min[j]) min[j] = temp[j];
-			if (temp[j] > max[j]) max[j] = temp[j];
-		}
-
 		aiVector3D normal = mesh->mNormals[i];
 		normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
 
@@ -83,29 +39,6 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		}
 	}
 
-	/*
-		Process data for Bounding Region
-	*/
-
-	if (boundType == BoundTypes::AABB) {
-		br.max = max;
-		br.min = min;
-	}
-	else {
-		br.center = BoundingRegion(min, max).calculateCenter();
-		float MaxRadiusSquared = 0.0f;
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			float RadiusSquared = 0.0f;
-			for (int j = 0; j < 3; j++) {
-				RadiusSquared += (vertices[i][j] - br.center[j]) * (vertices[i][j] - br.center[j]);
-			}
-			if (RadiusSquared > MaxRadiusSquared) {
-				MaxRadiusSquared = RadiusSquared;
-			}
-		}
-		br.radius = sqrt(MaxRadiusSquared);
-	}
-
 	this->vertices = vertices;
 	this->indices = indices;
 	this->texCoords = texCoords;
@@ -115,19 +48,91 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission)
 	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), rotation(rotation), scale(scale) {
 	rb.pos = pos;
+}
+Model::Model(Model model, glm::vec3 pos, Angles rotationAngle, glm::vec3 scale, bool hasCollission) 
+	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), scale(scale) {
+	rb.pos = pos;
+	switch (rotationAngle) {
+	case Angles::d0:
+		rotation = 0.0f;
+		break;
+	case Angles::d90:
+		rotation = PI / 2;
+		break;
+	case Angles::d180:
+		rotation = PI;
+		break;
+	case Angles::d270:
+		rotation = -PI / 2;
+		break;
+	}
+
 	if (!hasCollission) {
 		br = BoundingRegion();
 	}
 	else {
-		br.max = model.br.max * scale + pos;
-		br.min = model.br.min * scale + pos;
+		bool first = true;
+		glm::vec3 min, max;
+
+		/*
+			Calculations for Bounding Region depending on rotation angle
+		*/
+
+		for (glm::vec4& vertex : vertices) {
+			glm::vec3 temp = scale;
+
+			switch (rotationAngle) {
+			case Angles::d0:
+				temp.x *= vertex.x; //0
+				temp.y *= vertex.y;
+				temp.z *= vertex.z;
+				break;
+			case Angles::d90:
+				temp.x *= -vertex.z; // 90
+				temp.y *= vertex.y;
+				temp.z *= vertex.x;
+				break;
+			case Angles::d180:
+				temp.x *= vertex.x; //0
+				temp.y *= vertex.y;
+				temp.z *= vertex.z;
+				/*temp.x *= -vertex.z;//180
+				temp.y *= vertex.y;
+				temp.z *= -vertex.x;*/
+				break;
+			case Angles::d270:
+				temp.x *= vertex.z; //-90
+				temp.y *= vertex.y;
+				temp.z *= -vertex.x;
+				break;
+			}
+
+			if (first) {
+				min = temp;
+				max = temp;
+				first = false;
+			}
+
+			for (int j = 0; j < 3; j++) {
+				if (temp[j] < min[j]) min[j] = temp[j];
+				if (temp[j] > max[j]) max[j] = temp[j];
+			}
+		}
+
+		/*
+			Process data for Bounding Region (add position and scale bias)
+		*/
+
+		br.max = max + pos;
+		br.min = min + pos;
 	}
-} 
+}
 
 void Model::render(glm::vec3 cameraPos, glm::vec3 skullPos, float dt) {
 	rb.update(dt);
 
 	glm::mat4 transformation = glm::mat4(1.0f);
+
 	transformation = glm::translate(transformation, rb.pos);
 	transformation = glm::scale(transformation, scale);
 
