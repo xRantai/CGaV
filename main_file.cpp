@@ -344,8 +344,9 @@ void drawScene(GLFWwindow* window, float dt) {
 	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.rb.pos, skull.rb.pos, dt);
-		if (object.br.containsPoint(temp.pos)) { // sprawdź czy kolizja
+		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+
+		if (object.br.containsPoint(temp.pos)) {
 			test = false;
 			printf("Player pos:\t%f\t%f\t%f\nColission with: \n%f\t%f\t%f\n%f\t%f\t%f\n\n", temp.pos.x, temp.pos.y, temp.pos.z, object.br.min.x, object.br.min.y, object.br.min.z, object.br.max.x, object.br.max.y, object.br.max.z);
 		}
@@ -354,7 +355,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	if (test) {
 		Camera::camera.rb = temp;
 	}
-
 	
 	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
 

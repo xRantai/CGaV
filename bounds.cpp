@@ -16,7 +16,7 @@ glm::vec3 BoundingRegion::calculateDimensions(){
 }
 
 bool BoundingRegion::containsPoint(glm::vec3 pt) {
-	return (pt.x >= min.x) && (pt.x <= max.x) && (pt.y >= min.y) && (pt.y <= max.y) && (pt.z >= min.z) && (pt.z <= min.z);
+	return min.x <= pt.x && max.x >= pt.x && min.y <= pt.y && max.y >= pt.y && min.z <= pt.z && max.z >= pt.z;
 }
 bool BoundingRegion::intersectsWith(BoundingRegion br){
 	if (type == BoundTypes::AABB and br.type == BoundTypes::AABB) {
