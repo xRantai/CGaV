@@ -75,7 +75,7 @@ Model::Model(Model model, glm::vec3 pos, Angles rotationAngle, glm::vec3 scale, 
 		glm::vec3 min, max;
 
 		/*
-			Calculations for Bounding Region depending on rotation angle
+			Calculations for Bounding Region depending on rotation angle (magical -90 degree bias because yes)
 		*/
 
 		for (glm::vec4& vertex : vertices) {

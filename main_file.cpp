@@ -366,12 +366,8 @@ void drawScene(GLFWwindow* window, float dt) {
 
 	//printf("%f %f %f\n", Camera::camera.rb.pos.x, Camera::camera.rb.pos.y, Camera::camera.rb.pos.z);
 
-	int i = 0;
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
-		if (object.br.containsPoint(glm::vec3(1.0f, 0.0f, -2.0f)))
-			printf("%d\n", i);
-		i++;
 
 		if (object.br.containsPoint(tempX.pos)) {
 			wallX = true;
