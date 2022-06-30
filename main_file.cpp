@@ -339,7 +339,7 @@ void drawScene(GLFWwindow* window, float dt) {
 
 
 	bool test = true;
-	RigidBody temp = Camera::camera.rb;
+	RigidBody temp = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, Camera::camera.rb.velocity, Camera::camera.rb.acceleration);
 	temp.update(dt);
 	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
 
