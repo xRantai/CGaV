@@ -312,13 +312,14 @@ void initOpenGLProgram(GLFWwindow* window) {
 	textures.push_back(textureLoader.load("torch.png"));
 	modelTemplates.push_back(Model("torch.obj", textureLoader.getCurrentID()));
 
+	textures.push_back(textureLoader.load("skull.png"));
+	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID()));
+
 	textures.push_back(textureLoader.load("wall_spec.png"));
 	textures.push_back(textureLoader.load("floor_spec.png"));
 	textures.push_back(textureLoader.load("chest_spec.png"));
 	textures.push_back(textureLoader.load("torch.png"));
-
 	textures.push_back(textureLoader.load("skull.png"));
-	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID()));
 }
 
 //Zwolnienie zasobów zajętych przez program

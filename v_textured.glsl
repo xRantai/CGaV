@@ -22,27 +22,20 @@ out float d1;
 out float d2;
 
 
-out vec2 i_tc;
-out float i_nl1;
-out float i_nl2;
 
 void main(void) {
 
     d1 = distance(cameraPos, M*vertex);
     d2 = distance(skullPos, M*vertex);
 
-    vec4 lightDir1 = normalize(V*cameraPos - V*M*vertex);
-    vec4 lightDir2 = normalize(V*skullPos - V*M*vertex);
+    v = normalize(V*cameraPos - V*M*vertex);
+    l = normalize(V*skullPos - V*M*vertex);
+    n = normalize(V*M*normal);
 
+    vec4 n=normalize(V*M*normal);
+
+    iTexCoord0=texCoord0;
 
     gl_Position=P*V*M*vertex;
-
-
-    mat4 G=mat4(inverse(transpose(mat3(M))));
-    vec4 n=normalize(V*G*normal);
-
-    i_nl1=clamp(dot(n,lightDir1),0,1);
-    i_nl2=clamp(dot(n,lightDir2),0,1);
-    i_tc=texCoord0;
 }
 
