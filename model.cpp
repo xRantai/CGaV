@@ -27,33 +27,33 @@ Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::ve
 		vertices.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
 
 		/*
-			Calculations for Bounding Region depending on rotation angle
+			Calculations for Bounding Region depending on rotation angle (magical -90 degree bias because yes)
 		*/
 
 		glm::vec3 temp = scale;
 
 		if (rotation == 0.0f) {
-			temp.x *= -vertex.z; //90
-			temp.y *= vertex.y;
-			temp.z *= temp.x;
-
-		}
-		if (rotation == float(PI / 2)) {
-			temp.x *= -vertex.z;//180
+			temp.x *= vertex.z;//-90
 			temp.y *= vertex.y;
 			temp.z *= -vertex.x;
 
 		}
-		if (rotation = float( - PI / 2)) {
+		if (rotation == float(PI / 2)) {
 			temp.x *= vertex.x; //0
 			temp.y *= vertex.y;
 			temp.z *= vertex.z;
 
 		}
-		else {
-			temp.x *= vertex.z;//-90
+		if (rotation = float( - PI / 2)) {
+			temp.x *= -vertex.z;//180
 			temp.y *= vertex.y;
 			temp.z *= -vertex.x;
+
+		}
+		else {
+			temp.x *= -vertex.z; //90
+			temp.y *= vertex.y;
+			temp.z *= temp.x;
 
 		}
 

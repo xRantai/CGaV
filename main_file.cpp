@@ -345,12 +345,11 @@ void drawScene(GLFWwindow* window, float dt) {
 	tempY.update(dt);
 	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
-	//printf("Player pos:\t%f\t%f\t%f\n", temp.pos.x, temp.pos.y, temp.pos.z);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
 
-		if (object.br.containsPoint(tempX.pos)) {
+		if (object.br.containsPoint(tempX.pos)) { // sprawdzanie czy ruch nie naruszy innego obiektu
 			test[0] = false;
 		}
 		if (object.br.containsPoint(tempY.pos)) {
@@ -360,8 +359,6 @@ void drawScene(GLFWwindow* window, float dt) {
 			test[2] = false;
 		}
 	}
-
-	RigidBody out;
 
 	if (test[0]) {
 		Camera::camera.rb.pos.x = tempX.pos.x;
@@ -410,8 +407,7 @@ int main()
 
 	initOpenGLProgram(window); //Operacje inicjujące
 	//initModels();
-	scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), 0.0f, glm::vec3(0.5f)));
-	printf("Object created at:\nMax: %f %f %f\nMin: %f %f %f\n\n", scene[0].br.max.x, scene[0].br.max.y, scene[0].br.max.z, scene[0].br.min.x, scene[0].br.min.y, scene[0].br.min.z);
+	scene.push_back(Model(modelTemplates[3], glm::vec3(0.0f), float(PI/2), glm::vec3(0.5f)));
 
 	perspective = glm::perspective(glm::radians(50.0f), 1.0f, 0.5f, 50.0f); //Wylicz macierz rzutowania
 	// macierz P jest stałą więc nie ma sensu jej przesyłać w pętli
