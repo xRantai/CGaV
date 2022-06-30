@@ -5,9 +5,8 @@ glm::mat4 view;
 std::vector<GLuint> textures;
 
 Model::Model() {}
-Model::Model(std::string plik, unsigned int texID, BoundTypes boundType, glm::vec3 pos, float rotation, glm::vec3 scale)
+Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation, glm::vec3 scale)
 	: rotation(rotation), scale(scale), texID(texID) {
-	br.type = boundType;
 
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;

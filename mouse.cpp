@@ -28,19 +28,3 @@ void Mouse::cursorPosCallback(GLFWwindow* window, double _x, double _y) {
 
 	Camera::camera.updateCameraDirection(dx, dy);
 }
-
-double Mouse::getMouseX() {
-	return x;
-}
-
-double Mouse::getMouseY() {
-	return y;
-}
-
-double Mouse::getDX() {
-	return dx;
-}
-
-double Mouse::getDY() {
-	return dy;
-}

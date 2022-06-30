@@ -318,7 +318,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	textures.push_back(textureLoader.load("torch.png"));
 
 	textures.push_back(textureLoader.load("skull.png"));
-	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID(), BoundTypes::SPHERE));
+	modelTemplates.push_back(Model("skull.obj", textureLoader.getCurrentID()));
 }
 
 //Zwolnienie zasobów zajętych przez program

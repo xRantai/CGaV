@@ -15,17 +15,6 @@ public:
 
 	void update(float dt);
 
-	void applyForce(glm::vec3 force);
-	void applyForce(glm::vec3 direction, float magnitude);
-
-	void applyAcceleration(glm::vec3 a);
-	void applyAcceleration(glm::vec3 direction, float magnitude);
-
-	void applyImpulse(glm::vec3 force, float dt);
-	void applyImpulse(glm::vec3 direction, float magnitude, float dt);
-
-	void transferEnergy(float joules);
-
 	void setVelocity(glm::vec3 v, float magnitude);
 };
 
