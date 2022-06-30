@@ -353,8 +353,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	float rotation = updateSkull();
 	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
 
-	printf("Pozycja czaszki: %f, %f, %f\n", skull.rb.pos.x, skull.rb.pos.y, skull.rb.pos.z);
-
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
 	RigidBody tempX = RigidBody(Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
@@ -419,9 +417,9 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	//window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "sad_satan_fixed_most_final_v2.exe", glfwGetPrimaryMonitor(), NULL);
+	window = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,glfwGetVideoMode(glfwGetPrimaryMonitor())->height, "Katakumby", glfwGetPrimaryMonitor(), NULL);
 	//Okno na pokaz ^ Okno debug v
-	window = glfwCreateWindow(1000, 1000, "sad_satan_fixed_most_final_v2.exe", NULL, NULL);
+	//window = glfwCreateWindow(1000, 1000, "Katakumby", NULL, NULL);
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
