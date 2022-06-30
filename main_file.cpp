@@ -104,13 +104,13 @@ void initModels() {
 	scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
 
 	scene[scene.size() - 2].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
-	scene[scene.size() - 2].br.min = glm::vec3(2.5f, -0.1f, -100.0f);
+	scene[scene.size() - 2].br.min = glm::vec3(1.9f, -0.1f, -100.0f);
 
-	scene[scene.size() - 5].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
-	scene[scene.size() - 5].br.min = glm::vec3(-100.0f, -0.1f, -3.6f);
+	scene[scene.size() - 3].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
+	scene[scene.size() - 3].br.min = glm::vec3(-100.0f, -0.1f, -1.6f);
 
-	scene[scene.size() - 6].br.max = glm::vec3(100.0f, 0.1f, -1.6f);
-	scene[scene.size() - 6].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
+	scene[scene.size() - 4].br.max = glm::vec3(100.0f, 0.1f, -3.6f);
+	scene[scene.size() - 4].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
 
 
 	for (int i = 0; i < 7; i++) { //second floor floor
@@ -282,9 +282,6 @@ void initModels() {
 	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.85f), Angles::d90, glm::vec3(0.05f))); //chest model
 
 	torch = Model(modelTemplates[4], glm::vec3(0.3f, -0.5f, -1.0f), -float(Camera::camera.yaw * PI / 180 + PI / 2), glm::vec3(0.5f), false);
-
-	scene[91].br = BoundingRegion();
-	scene[92].br = BoundingRegion();
 }
 
 //Procedura inicjująca
@@ -372,6 +369,9 @@ void drawScene(GLFWwindow* window, float dt) {
 	int i = 0;
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+		if (object.br.containsPoint(glm::vec3(1.0f, 0.0f, -2.0f)))
+			printf("%d\n", i);
+		i++;
 
 		if (object.br.containsPoint(tempX.pos)) {
 			wallX = true;
