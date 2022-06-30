@@ -97,10 +97,21 @@ void initModels() {
 		for (int j = 0; j < 7; j++) {
 			if (i == 3 && j == 4) { continue; }
 			scene.push_back(Model(modelTemplates[1], glm::vec3(8.0f - 2.3f * i, 0.0f, 6.5f - 2.3f * j), Angles::d0, glm::vec3(2.3f)));
-			scene[scene.size() - 1].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
-			scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
+			scene[scene.size() - 1].br = BoundingRegion();
 		}
 	}
+	scene[scene.size() - 1].br.max = glm::vec3(0.5f, 0.1f, 100.0f);
+	scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
+
+	scene[scene.size() - 2].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
+	scene[scene.size() - 2].br.min = glm::vec3(2.5f, -0.1f, -100.0f);
+
+	scene[scene.size() - 5].br.max = glm::vec3(100.0f, 0.1f, 100.0f);
+	scene[scene.size() - 5].br.min = glm::vec3(-100.0f, -0.1f, -3.6f);
+
+	scene[scene.size() - 6].br.max = glm::vec3(100.0f, 0.1f, -1.6f);
+	scene[scene.size() - 6].br.min = glm::vec3(-100.0f, -0.1f, -100.0f);
+
 
 	for (int i = 0; i < 7; i++) { //second floor floor
 		for (int j = 0; j < 7; j++) {
@@ -109,7 +120,6 @@ void initModels() {
 			scene[scene.size() - 1].br.min = glm::vec3(-100.0f, -100.0f, -100.0f);
 		}
 	}
-
 
 	scene.push_back(Model(modelTemplates[2], glm::vec3(1.1f, -0.15f, -2.7f), Angles::d0, glm::vec3(1.2f), false)); //hole model
 
@@ -272,6 +282,9 @@ void initModels() {
 	scene.push_back(Model(modelTemplates[3], glm::vec3(8.5f, -1.8f, 6.85f), Angles::d90, glm::vec3(0.05f))); //chest model
 
 	torch = Model(modelTemplates[4], glm::vec3(0.3f, -0.5f, -1.0f), -float(Camera::camera.yaw * PI / 180 + PI / 2), glm::vec3(0.5f), false);
+
+	scene[91].br = BoundingRegion();
+	scene[92].br = BoundingRegion();
 }
 
 //Procedura inicjująca
@@ -347,17 +360,22 @@ void drawScene(GLFWwindow* window, float dt) {
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
 	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
-	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.7f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYGround.update(dt);
-	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.7f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYCeiling.update(dt);
 	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
 
-	printf("%f %f %f\n", Camera::camera.rb.velocity.y, Camera::camera.rb.acceleration.y, Camera::camera.rb.pos.y);
+	//printf("%f %f %f\n", Camera::camera.rb.pos.x, Camera::camera.rb.pos.y, Camera::camera.rb.pos.z);
 
+	int i = 0;
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+		if (object.br.containsPoint(glm::vec3(1.0f, 0.0f, -2.0f))) {
+			printf("%d\n", i);
+		}
+		i++;
 
 		if (object.br.containsPoint(tempX.pos)) {
 			wallX = true;
