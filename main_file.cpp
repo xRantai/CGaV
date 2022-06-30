@@ -354,13 +354,13 @@ void drawScene(GLFWwindow* window, float dt) {
 
 
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
-	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempX = RigidBody(Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
-	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos - glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYGround = RigidBody(Camera::camera.rb.pos - glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYGround.update(dt);
-	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.1f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.pos + glm::vec3(0.0f, 0.1f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYCeiling.update(dt);
-	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
+	RigidBody tempZ = RigidBody(Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
