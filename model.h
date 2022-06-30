@@ -48,7 +48,7 @@ public:
 	std::vector<unsigned int> indices;
 
 	Model();
-	Model(std::string plik, unsigned int texID, glm::vec3 pos = glm::vec3(0.0f), float rotation = 0.0f, glm::vec3 scale = glm::vec3(1.0f)); // tworzenie modelu z pliku
+	Model(std::string plik, unsigned int texID); // tworzenie modelu z pliku
 	Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission = true); // tworzenie modelu z istniej¹cego modelu
 	Model(Model model, glm::vec3 pos, Angles rotationAngle, glm::vec3 scale, bool hasCollission = true); // tworzenie modelu który mogê obróciæ
 

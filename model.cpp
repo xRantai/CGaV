@@ -5,8 +5,8 @@ glm::mat4 view;
 std::vector<GLuint> textures;
 
 Model::Model() {}
-Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation, glm::vec3 scale)
-	: rotation(rotation), scale(scale), texID(texID) {
+Model::Model(std::string plik, unsigned int texID)
+	: texID(texID) {
 
 	Assimp::Importer importer;
 	std::vector< glm::vec4 > vertices;
@@ -42,7 +42,6 @@ Model::Model(std::string plik, unsigned int texID, glm::vec3 pos, float rotation
 	this->indices = indices;
 	this->texCoords = texCoords;
 	this->normals = normals;
-	rb.pos = pos;
 }
 Model::Model(Model model, glm::vec3 pos, float rotation, glm::vec3 scale, bool hasCollission)
 	: vertices(model.vertices), indices(model.indices), texCoords(model.texCoords), normals(model.normals), texID(model.texID), rotation(rotation), scale(scale) {
