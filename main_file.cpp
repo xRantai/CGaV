@@ -37,7 +37,7 @@ Place, Fifth model[1], Boston, MA  02110 - 1301  USA
 #include "mouse.h"
 #include "camera.h"
 
-Camera Camera::camera(glm::vec3(7.0f, 0.8f, 2.0f));
+Camera Camera::camera(glm::vec3(7.0f, 1.0f, 2.0f));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Model torch; 
@@ -360,9 +360,9 @@ void drawScene(GLFWwindow* window, float dt) {
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
 	RigidBody tempX = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
-	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYGround = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos - glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYGround.update(dt);
-	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.6f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
+	RigidBody tempYCeiling = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos + glm::vec3(0.0f, 0.1f, 0.0f), glm::vec3(0.0f, Camera::camera.rb.velocity.y, 0.0f), Camera::camera.rb.acceleration);
 	tempYCeiling.update(dt);
 	RigidBody tempZ = RigidBody(Camera::camera.rb.mass, Camera::camera.rb.pos, glm::vec3(0.0f, 0.0f, Camera::camera.rb.velocity.z), Camera::camera.rb.acceleration);
 	tempZ.update(dt);
@@ -372,10 +372,6 @@ void drawScene(GLFWwindow* window, float dt) {
 	int i = 0;
 	for (Model &object : scene) { // narysuj wszystkie modele
 		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
-		if (object.br.containsPoint(glm::vec3(1.0f, 0.0f, -2.0f))) {
-			printf("%d\n", i);
-		}
-		i++;
 
 		if (object.br.containsPoint(tempX.pos)) {
 			wallX = true;
@@ -398,23 +394,18 @@ void drawScene(GLFWwindow* window, float dt) {
 	}
 
 	if (ground) { // Jeżeli na ziemi step assist
-		Camera::camera.rb.velocity.y = 0.001f;
+		Camera::camera.rb.velocity.y = 0.01f;
 	}
-	else { // Jeżeli nie ma podłogi spadaj
-		Camera::camera.rb.pos.y = tempYGround.pos.y;
+	else if (ceiling) { // Jeżeli głowa w suficie spadaj
+		Camera::camera.rb.velocity.y = -0.01f;
+	}
+	else { //dryfujesz sobie gdzieś nie wnikam
+		Camera::camera.rb.pos.y = tempYGround.pos.y + 0.6f;
 		Camera::camera.rb.velocity.y = tempYGround.velocity.y;
 	}
 
 	if (!wallZ) { // przesunięcie w osi Z
 		Camera::camera.rb.pos.z = tempZ.pos.z;
-	}
-
-	if (ceiling) { // jeżeli głowa w suficie zatrzymaj
-		Camera::camera.rb.velocity.y = -0.001f;
-	}
-	else { // jeżeli nie to możesz ciągle iść w górę
-		Camera::camera.rb.pos.y = tempYGround.pos.y;
-		Camera::camera.rb.velocity.y = tempYGround.velocity.y;
 	}
 	
 	Camera::camera.rb.velocity = glm::vec3(0, Camera::camera.rb.velocity.y, 0);
