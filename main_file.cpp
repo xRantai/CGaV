@@ -334,7 +334,7 @@ float updateSkull() {
 	glm::vec3 direction = skull.rb.pos - Camera::camera.rb.pos;
 	skull.rb.setVelocity(direction, -1.0f); // skull follows you
 	skull.rotation = glm::atan(direction.x, direction.z) - PI; // looks your direction
-	float rotation = glm::atan(direction.y, direction.x);
+	float rotation = glm::atan(direction.y, abs(direction.x));
 	return rotation;
 }
 
@@ -352,6 +352,8 @@ void drawScene(GLFWwindow* window, float dt) {
 	float rotation = updateSkull();
 	skull.render3(Camera::camera.rb.pos, skull.rb.pos, dt, rotation);
 
+	printf("Pozycja czaszki: %f, %f, %f\n", skull.rb.pos.x, skull.rb.pos.y, skull.rb.pos.z);
+
 	bool ground = false, ceiling = false, wallX = false, wallZ = false;
 	RigidBody tempX = RigidBody(Camera::camera.rb.pos, glm::vec3(Camera::camera.rb.velocity.x, 0.0f, 0.0f), Camera::camera.rb.acceleration);
 	tempX.update(dt);
@@ -363,7 +365,7 @@ void drawScene(GLFWwindow* window, float dt) {
 	tempZ.update(dt);
 
 	for (Model &object : scene) { // narysuj wszystkie modele
-		object.render(Camera::camera.rb.pos, scene[0].rb.pos, dt);
+		object.render(Camera::camera.rb.pos, skull.rb.pos, dt);
 
 		if (object.br.containsPoint(tempX.pos)) {
 			wallX = true;
